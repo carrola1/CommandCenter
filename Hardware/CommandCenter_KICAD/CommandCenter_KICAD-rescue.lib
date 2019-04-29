@@ -1,0 +1,33 @@
+EESchema-LIBRARY Version 2.4
+#encoding utf-8
+#
+# Mounting_Hole-NFC_Toy-rescue
+#
+DEF Mounting_Hole-NFC_Toy-rescue MK 0 40 Y Y 1 F N
+F0 "MK" 0 200 50 H V C CNN
+F1 "Mounting_Hole-NFC_Toy-rescue" 0 125 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+$FPLIST
+ Mounting?Hole*
+ Hole*
+$ENDFPLIST
+DRAW
+C 0 0 50 0 1 50 N
+ENDDRAW
+ENDDEF
+#
+# TEST-NFC_Toy-rescue
+#
+DEF TEST-NFC_Toy-rescue TP 0 40 N N 1 F N
+F0 "TP" 0 300 50 H V C BNN
+F1 "TEST-NFC_Toy-rescue" 0 250 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+P 6 0 1 0 0 200 -50 150 0 100 50 150 0 200 0 200 N
+X ~ 1 0 0 100 U 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
+#End Library

@@ -1,0 +1,579 @@
+EESchema Schematic File Version 4
+LIBS:CommandCenter_KICAD-cache
+EELAYER 29 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 2 5
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L MAX98357:MAX98357 U?
+U 1 1 5ACDFE57
+P 7190 2200
+F 0 "U?" H 7190 2100 50  0000 C CNN
+F 1 "MAX98357" H 7190 2300 50  0000 C CNN
+F 2 "NFC_Toy_Lib:QFN50P300X300X80-17N" H 7190 2200 50  0001 C CNN
+F 3 "DOCUMENTATION" H 7190 2200 50  0001 C CNN
+	1    7190 2200
+	1    0    0    -1  
+$EndComp
+Text GLabel 6190 1800 0    47   Input ~ 0
+I2S_SD
+Text GLabel 6190 2500 0    47   Input ~ 0
+I2S_WS
+Text GLabel 6190 2600 0    47   Input ~ 0
+I2S_CK
+Wire Wire Line
+	6190 2500 6290 2500
+Wire Wire Line
+	6190 2600 6290 2600
+Wire Wire Line
+	6190 1800 6290 1800
+NoConn ~ 6290 2100
+NoConn ~ 6290 2200
+NoConn ~ 6290 2300
+NoConn ~ 6290 2400
+$Comp
+L power:GND #PWR?
+U 1 1 5ACDFE68
+P 7190 3150
+F 0 "#PWR?" H 7190 2900 50  0001 C CNN
+F 1 "GND" H 7190 3000 50  0000 C CNN
+F 2 "" H 7190 3150 50  0001 C CNN
+F 3 "" H 7190 3150 50  0001 C CNN
+	1    7190 3150
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR?
+U 1 1 5ACDFE6E
+P 7240 950
+F 0 "#PWR?" H 7240 800 50  0001 C CNN
+F 1 "+5V" H 7240 1090 50  0000 C CNN
+F 2 "" H 7240 950 50  0001 C CNN
+F 3 "" H 7240 950 50  0001 C CNN
+	1    7240 950 
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7190 1300 7190 950 
+Wire Wire Line
+	7290 950  7290 1300
+Connection ~ 7240 950 
+Wire Wire Line
+	7190 3100 7190 3150
+Wire Wire Line
+	7090 3100 7090 3150
+Wire Wire Line
+	7290 3150 7290 3100
+Connection ~ 7190 3150
+Text GLabel 6190 2000 0    47   Input ~ 0
+AUDIO_SD_N_0
+$Comp
+L Device:R R?
+U 1 1 5ACDFE7F
+P 5540 1710
+F 0 "R?" V 5620 1710 50  0000 C CNN
+F 1 "DNP" V 5540 1710 50  0000 C CNN
+F 2 "Resistors_SMD:R_0603_HandSoldering" V 5470 1710 50  0001 C CNN
+F 3 "" H 5540 1710 50  0001 C CNN
+	1    5540 1710
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5ACDFE86
+P 5540 2110
+F 0 "R?" V 5620 2110 50  0000 C CNN
+F 1 "100k" V 5540 2110 50  0000 C CNN
+F 2 "Resistors_SMD:R_0603_HandSoldering" V 5470 2110 50  0001 C CNN
+F 3 "" H 5540 2110 50  0001 C CNN
+	1    5540 2110
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5ACDFE90
+P 5540 2310
+F 0 "#PWR?" H 5540 2060 50  0001 C CNN
+F 1 "GND" H 5540 2160 50  0000 C CNN
+F 2 "" H 5540 2310 50  0001 C CNN
+F 3 "" H 5540 2310 50  0001 C CNN
+	1    5540 2310
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR?
+U 1 1 5ACDFE96
+P 5540 1510
+F 0 "#PWR?" H 5540 1360 50  0001 C CNN
+F 1 "+5V" H 5540 1650 50  0000 C CNN
+F 2 "" H 5540 1510 50  0001 C CNN
+F 3 "" H 5540 1510 50  0001 C CNN
+	1    5540 1510
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5540 1560 5540 1510
+Wire Wire Line
+	5540 2260 5540 2310
+Text Notes 6440 1460 2    47   ~ 0
+GAIN_SLOT:\n    100k to GND - 15dB\n    GND - 12dB\n    NC - 9dB\n    VDD - 6dB\n    100k to VDD - 3dB
+$Comp
+L Pad:Pad J?
+U 1 1 5ACE08A3
+P 8690 2300
+F 0 "J?" H 8690 2100 60  0000 C CNN
+F 1 "SPKR0-" H 8690 2300 60  0000 C CNN
+F 2 "NFC_Toy_Lib:Pad_SMD_Small" H 8690 2300 60  0001 C CNN
+F 3 "" H 8690 2300 60  0001 C CNN
+	1    8690 2300
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Pad:Pad J?
+U 1 1 5ACE08AA
+P 8690 2650
+F 0 "J?" H 8690 2450 60  0000 C CNN
+F 1 "SPKR0+" H 8690 2650 60  0000 C CNN
+F 2 "NFC_Toy_Lib:Pad_SMD_Small" H 8690 2650 60  0001 C CNN
+F 3 "" H 8690 2650 60  0001 C CNN
+	1    8690 2650
+	-1   0    0    -1  
+$EndComp
+Text GLabel 3690 3080 2    47   Input ~ 0
+SPI_NSS
+Text GLabel 3690 3380 2    47   Input ~ 0
+SPI_SCK
+Text GLabel 3690 3580 2    47   Output ~ 0
+SPI_MISO
+Text GLabel 3690 3180 2    47   Input ~ 0
+SPI_MOSI
+Wire Wire Line
+	3690 3580 3440 3580
+Wire Wire Line
+	3690 3380 3440 3380
+Wire Wire Line
+	3690 3180 3440 3180
+Wire Wire Line
+	3690 3080 3440 3080
+$Comp
+L power:+3.3V #PWR?
+U 1 1 5ACE0C10
+P 3590 2450
+F 0 "#PWR?" H 3590 2300 50  0001 C CNN
+F 1 "+3.3V" H 3590 2590 50  0000 C CNN
+F 2 "" H 3590 2450 50  0001 C CNN
+F 3 "" H 3590 2450 50  0001 C CNN
+	1    3590 2450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3590 3280 3440 3280
+Wire Wire Line
+	3440 3480 3590 3480
+Text GLabel 3690 3880 2    47   Output ~ 0
+SD_DETECT
+Text GLabel 3690 3980 2    47   Output ~ 0
+SD_SW
+NoConn ~ 3440 3680
+Wire Wire Line
+	3440 3880 3690 3880
+Wire Wire Line
+	3440 3980 3690 3980
+$Comp
+L power:GND #PWR?
+U 1 1 5ACE0D8F
+P 3590 4230
+F 0 "#PWR?" H 3590 3980 50  0001 C CNN
+F 1 "GND" H 3590 4080 50  0000 C CNN
+F 2 "" H 3590 4230 50  0001 C CNN
+F 3 "" H 3590 4230 50  0001 C CNN
+	1    3590 4230
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3440 4180 3590 4180
+Connection ~ 3590 4180
+Wire Wire Line
+	8090 2500 8240 2500
+Wire Wire Line
+	8240 2500 8240 2400
+Wire Wire Line
+	8240 2400 8440 2400
+Wire Wire Line
+	8090 2600 8240 2600
+Wire Wire Line
+	8240 2600 8240 2750
+Wire Wire Line
+	8240 2750 8440 2750
+$Comp
+L Device:C C?
+U 1 1 5AD11D71
+P 3780 2640
+F 0 "C?" H 3805 2740 50  0000 L CNN
+F 1 "0.1u" H 3805 2540 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0402" H 3818 2490 50  0001 C CNN
+F 3 "" H 3780 2640 50  0001 C CNN
+	1    3780 2640
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5AD11F0E
+P 3780 2830
+F 0 "#PWR?" H 3780 2580 50  0001 C CNN
+F 1 "GND" H 3780 2680 50  0000 C CNN
+F 2 "" H 3780 2830 50  0001 C CNN
+F 3 "" H 3780 2830 50  0001 C CNN
+	1    3780 2830
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3780 2490 3780 2470
+Wire Wire Line
+	3780 2470 3590 2470
+Connection ~ 3590 2470
+Wire Wire Line
+	3780 2790 3780 2830
+$Comp
+L Device:C C?
+U 1 1 5AD1240E
+P 7520 1140
+F 0 "C?" H 7545 1240 50  0000 L CNN
+F 1 "0.1u" H 7545 1040 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0402" H 7558 990 50  0001 C CNN
+F 3 "" H 7520 1140 50  0001 C CNN
+	1    7520 1140
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5AD12414
+P 7520 1320
+F 0 "#PWR?" H 7520 1070 50  0001 C CNN
+F 1 "GND" H 7520 1170 50  0000 C CNN
+F 2 "" H 7520 1320 50  0001 C CNN
+F 3 "" H 7520 1320 50  0001 C CNN
+	1    7520 1320
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7520 1290 7520 1320
+$Comp
+L Device:C C?
+U 1 1 5AD12566
+P 7850 1140
+F 0 "C?" H 7875 1240 50  0000 L CNN
+F 1 "10u" H 7875 1040 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0603_HandSoldering" H 7888 990 50  0001 C CNN
+F 3 "" H 7850 1140 50  0001 C CNN
+	1    7850 1140
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5AD125D7
+P 7850 1330
+F 0 "#PWR?" H 7850 1080 50  0001 C CNN
+F 1 "GND" H 7850 1180 50  0000 C CNN
+F 2 "" H 7850 1330 50  0001 C CNN
+F 3 "" H 7850 1330 50  0001 C CNN
+	1    7850 1330
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7850 1290 7850 1330
+Wire Wire Line
+	7520 950  7520 990 
+Connection ~ 7290 950 
+Wire Wire Line
+	7850 950  7850 990 
+Connection ~ 7520 950 
+Connection ~ 7290 3150
+Wire Wire Line
+	7440 3150 7440 3100
+Wire Wire Line
+	3590 2450 3590 2470
+Wire Wire Line
+	3590 3480 3590 4180
+Wire Wire Line
+	7090 3150 7190 3150
+Wire Wire Line
+	7190 950  7240 950 
+Wire Wire Line
+	7240 950  7290 950 
+Wire Wire Line
+	7190 3150 7290 3150
+Wire Wire Line
+	3590 4180 3590 4230
+Wire Wire Line
+	3590 2470 3590 3280
+Wire Wire Line
+	7290 950  7520 950 
+Wire Wire Line
+	7520 950  7850 950 
+Wire Wire Line
+	7290 3150 7440 3150
+$Comp
+L Micro_SD_503182-1852:503182-1852 J?
+U 1 1 5CC5972C
+P 3240 3580
+F 0 "J?" H 3383 4447 50  0000 C CNN
+F 1 "503182-1852" H 3383 4356 50  0000 C CNN
+F 2 "MOLEX_503182-1852" H 3240 3580 50  0001 L BNN
+F 3 "" H 3240 3580 50  0001 L BNN
+F 4 "Unavailable" H 3240 3580 50  0001 L BNN "Field4"
+F 5 "1.10mm Pitch microSD Memory Card Connector, Normal Mount Surface Mount, Push-Push Type, 1.45mm Height, Anti-card fly-out" H 3240 3580 50  0001 L BNN "Field5"
+F 6 "None" H 3240 3580 50  0001 L BNN "Field6"
+F 7 "Molex" H 3240 3580 50  0001 L BNN "Field7"
+F 8 "None" H 3240 3580 50  0001 L BNN "Field8"
+	1    3240 3580
+	-1   0    0    -1  
+$EndComp
+NoConn ~ 3440 2980
+Wire Wire Line
+	5540 1860 5540 1900
+Wire Wire Line
+	6190 2000 6290 2000
+Wire Wire Line
+	6290 1900 5540 1900
+Connection ~ 5540 1900
+Wire Wire Line
+	5540 1900 5540 1960
+$Comp
+L MAX98357:MAX98357 U?
+U 1 1 5CC75407
+P 7190 4990
+F 0 "U?" H 7190 4890 50  0000 C CNN
+F 1 "MAX98357" H 7190 5090 50  0000 C CNN
+F 2 "NFC_Toy_Lib:QFN50P300X300X80-17N" H 7190 4990 50  0001 C CNN
+F 3 "DOCUMENTATION" H 7190 4990 50  0001 C CNN
+	1    7190 4990
+	1    0    0    -1  
+$EndComp
+Text GLabel 6190 4590 0    47   Input ~ 0
+I2S_SD
+Text GLabel 6190 5290 0    47   Input ~ 0
+I2S_WS
+Text GLabel 6190 5390 0    47   Input ~ 0
+I2S_CK
+Wire Wire Line
+	6190 5290 6290 5290
+Wire Wire Line
+	6190 5390 6290 5390
+Wire Wire Line
+	6190 4590 6290 4590
+NoConn ~ 6290 4890
+NoConn ~ 6290 4990
+NoConn ~ 6290 5090
+NoConn ~ 6290 5190
+$Comp
+L power:GND #PWR?
+U 1 1 5CC75417
+P 7190 5940
+F 0 "#PWR?" H 7190 5690 50  0001 C CNN
+F 1 "GND" H 7190 5790 50  0000 C CNN
+F 2 "" H 7190 5940 50  0001 C CNN
+F 3 "" H 7190 5940 50  0001 C CNN
+	1    7190 5940
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR?
+U 1 1 5CC7541D
+P 7240 3740
+F 0 "#PWR?" H 7240 3590 50  0001 C CNN
+F 1 "+5V" H 7240 3880 50  0000 C CNN
+F 2 "" H 7240 3740 50  0001 C CNN
+F 3 "" H 7240 3740 50  0001 C CNN
+	1    7240 3740
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7190 4090 7190 3740
+Wire Wire Line
+	7290 3740 7290 4090
+Connection ~ 7240 3740
+Wire Wire Line
+	7190 5890 7190 5940
+Wire Wire Line
+	7090 5890 7090 5940
+Wire Wire Line
+	7290 5940 7290 5890
+Connection ~ 7190 5940
+Text GLabel 6190 4790 0    47   Input ~ 0
+AUDIO_SD_N_1
+$Comp
+L Device:R R?
+U 1 1 5CC7542B
+P 5540 4500
+F 0 "R?" V 5620 4500 50  0000 C CNN
+F 1 "DNP" V 5540 4500 50  0000 C CNN
+F 2 "Resistors_SMD:R_0603_HandSoldering" V 5470 4500 50  0001 C CNN
+F 3 "" H 5540 4500 50  0001 C CNN
+	1    5540 4500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5CC75431
+P 5540 4900
+F 0 "R?" V 5620 4900 50  0000 C CNN
+F 1 "100k" V 5540 4900 50  0000 C CNN
+F 2 "Resistors_SMD:R_0603_HandSoldering" V 5470 4900 50  0001 C CNN
+F 3 "" H 5540 4900 50  0001 C CNN
+	1    5540 4900
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5CC75437
+P 5540 5100
+F 0 "#PWR?" H 5540 4850 50  0001 C CNN
+F 1 "GND" H 5540 4950 50  0000 C CNN
+F 2 "" H 5540 5100 50  0001 C CNN
+F 3 "" H 5540 5100 50  0001 C CNN
+	1    5540 5100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR?
+U 1 1 5CC7543D
+P 5540 4300
+F 0 "#PWR?" H 5540 4150 50  0001 C CNN
+F 1 "+5V" H 5540 4440 50  0000 C CNN
+F 2 "" H 5540 4300 50  0001 C CNN
+F 3 "" H 5540 4300 50  0001 C CNN
+	1    5540 4300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5540 4350 5540 4300
+Wire Wire Line
+	5540 5050 5540 5100
+Text Notes 6440 4250 2    47   ~ 0
+GAIN_SLOT:\n    100k to GND - 15dB\n    GND - 12dB\n    NC - 9dB\n    VDD - 6dB\n    100k to VDD - 3dB
+$Comp
+L Pad:Pad J?
+U 1 1 5CC75446
+P 8690 5090
+F 0 "J?" H 8690 4890 60  0000 C CNN
+F 1 "SPKR1-" H 8690 5090 60  0000 C CNN
+F 2 "NFC_Toy_Lib:Pad_SMD_Small" H 8690 5090 60  0001 C CNN
+F 3 "" H 8690 5090 60  0001 C CNN
+	1    8690 5090
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Pad:Pad J?
+U 1 1 5CC7544C
+P 8690 5440
+F 0 "J?" H 8690 5240 60  0000 C CNN
+F 1 "SPKR1+" H 8690 5440 60  0000 C CNN
+F 2 "NFC_Toy_Lib:Pad_SMD_Small" H 8690 5440 60  0001 C CNN
+F 3 "" H 8690 5440 60  0001 C CNN
+	1    8690 5440
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	8090 5290 8240 5290
+Wire Wire Line
+	8240 5290 8240 5190
+Wire Wire Line
+	8240 5190 8440 5190
+Wire Wire Line
+	8090 5390 8240 5390
+Wire Wire Line
+	8240 5390 8240 5540
+Wire Wire Line
+	8240 5540 8440 5540
+$Comp
+L Device:C C?
+U 1 1 5CC75458
+P 7520 3930
+F 0 "C?" H 7545 4030 50  0000 L CNN
+F 1 "0.1u" H 7545 3830 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0402" H 7558 3780 50  0001 C CNN
+F 3 "" H 7520 3930 50  0001 C CNN
+	1    7520 3930
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5CC7545E
+P 7520 4110
+F 0 "#PWR?" H 7520 3860 50  0001 C CNN
+F 1 "GND" H 7520 3960 50  0000 C CNN
+F 2 "" H 7520 4110 50  0001 C CNN
+F 3 "" H 7520 4110 50  0001 C CNN
+	1    7520 4110
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7520 4080 7520 4110
+$Comp
+L Device:C C?
+U 1 1 5CC75465
+P 7850 3930
+F 0 "C?" H 7875 4030 50  0000 L CNN
+F 1 "10u" H 7875 3830 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0603_HandSoldering" H 7888 3780 50  0001 C CNN
+F 3 "" H 7850 3930 50  0001 C CNN
+	1    7850 3930
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5CC7546B
+P 7850 4120
+F 0 "#PWR?" H 7850 3870 50  0001 C CNN
+F 1 "GND" H 7850 3970 50  0000 C CNN
+F 2 "" H 7850 4120 50  0001 C CNN
+F 3 "" H 7850 4120 50  0001 C CNN
+	1    7850 4120
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7850 4080 7850 4120
+Wire Wire Line
+	7520 3740 7520 3780
+Connection ~ 7290 3740
+Wire Wire Line
+	7850 3740 7850 3780
+Connection ~ 7520 3740
+Connection ~ 7290 5940
+Wire Wire Line
+	7440 5940 7440 5890
+Wire Wire Line
+	7090 5940 7190 5940
+Wire Wire Line
+	7190 3740 7240 3740
+Wire Wire Line
+	7240 3740 7290 3740
+Wire Wire Line
+	7190 5940 7290 5940
+Wire Wire Line
+	7290 3740 7520 3740
+Wire Wire Line
+	7520 3740 7850 3740
+Wire Wire Line
+	7290 5940 7440 5940
+Wire Wire Line
+	5540 4650 5540 4690
+Wire Wire Line
+	6190 4790 6290 4790
+Wire Wire Line
+	6290 4690 5540 4690
+Connection ~ 5540 4690
+Wire Wire Line
+	5540 4690 5540 4750
+$EndSCHEMATC

@@ -1,0 +1,34 @@
+EESchema-LIBRARY Version 2.3
+#encoding utf-8
+#(c) SnapEDA 2016 (snapeda.com)
+#This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA) with Design Exception 1.0
+#
+# SN74LVC2T45
+#
+DEF SN74LVC2T45 U 0 40 Y Y 1 L N
+F0 "U" -212 661 50 H V L BNN
+F1 "SN74LVC2T45" -176 -933 50 H V L BNN
+F2 "SOP50P310X90-8N" 0 0 50 H I L BNN
+F3 "VFSOP-8 Texas Instruments" 0 0 50 H I L BNN
+F4 "Texas Instruments" 0 0 50 H I L BNN
+F5 "https://www.digikey.com/product-detail/en/texas-instruments/SN74LVC2T45/296-32331-1-ND/3506170?WT.z_cid=ref_snapeda&utm_source=snapeda&utm_medium=aggregator&utm_campaign=buynow" 0 0 50 H I L BNN
+F6 "296-32331-1-ND" 0 0 50 H I L BNN
+F7 "2-Bit Dual Supply Transceiver with Configurable Voltage-Level Shifting and 3-State Outputs 8-VSSOP -40 to 85" 0 0 50 H I L BNN
+F8 "SN74LVC2T45" 0 0 50 H I L BNN
+DRAW
+P 2 0 0 16 -500 500 -500 -700 N
+P 2 0 0 16 -500 -700 500 -700 N
+P 2 0 0 16 500 -700 500 500 N
+P 2 0 0 16 500 500 -500 500 N
+X VCCA 1 -700 300 200 R 40 40 0 0 W
+X VCCB 8 -700 200 200 R 40 40 0 0 W
+X DIR 5 -700 0 200 R 40 40 0 0 I
+X A1 2 -700 -200 200 R 40 40 0 0 B
+X A2 3 -700 -300 200 R 40 40 0 0 B
+X GND 4 -700 -500 200 R 40 40 0 0 P
+X B1 7 700 300 200 L 40 40 0 0 B
+X B2 6 700 200 200 L 40 40 0 0 B
+ENDDRAW
+ENDDEF
+#
+# End Library
