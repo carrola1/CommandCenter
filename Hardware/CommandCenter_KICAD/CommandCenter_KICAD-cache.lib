@@ -35,6 +35,25 @@ C 0 0 50 0 1 50 N
 ENDDRAW
 ENDDEF
 #
+# Connector_Generic_Conn_01x02
+#
+DEF Connector_Generic_Conn_01x02 J 0 40 Y N 1 F N
+F0 "J" 0 100 50 H V C CNN
+F1 "Connector_Generic_Conn_01x02" 0 -200 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+$FPLIST
+ Connector*:*_1x??_*
+$ENDFPLIST
+DRAW
+S -50 -95 0 -105 1 1 6 N
+S -50 5 0 -5 1 1 6 N
+S -50 50 50 -150 1 1 10 f
+X Pin_1 1 -200 0 150 R 50 50 1 1 P
+X Pin_2 2 -200 -100 150 R 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
 # Connector_Generic_Conn_01x03
 #
 DEF Connector_Generic_Conn_01x03 J 0 40 Y N 1 F N
@@ -53,6 +72,62 @@ S -50 150 50 -150 1 1 10 f
 X Pin_1 1 -200 100 150 R 50 50 1 1 P
 X Pin_2 2 -200 0 150 R 50 50 1 1 P
 X Pin_3 3 -200 -100 150 R 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
+# Connector_Generic_Conn_01x04
+#
+DEF Connector_Generic_Conn_01x04 J 0 40 Y N 1 F N
+F0 "J" 0 200 50 H V C CNN
+F1 "Connector_Generic_Conn_01x04" 0 -300 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+$FPLIST
+ Connector*:*_1x??_*
+$ENDFPLIST
+DRAW
+S -50 -195 0 -205 1 1 6 N
+S -50 -95 0 -105 1 1 6 N
+S -50 5 0 -5 1 1 6 N
+S -50 105 0 95 1 1 6 N
+S -50 150 50 -250 1 1 10 f
+X Pin_1 1 -200 100 150 R 50 50 1 1 P
+X Pin_2 2 -200 0 150 R 50 50 1 1 P
+X Pin_3 3 -200 -100 150 R 50 50 1 1 P
+X Pin_4 4 -200 -200 150 R 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
+# Connector_Generic_Conn_01x09
+#
+DEF Connector_Generic_Conn_01x09 J 0 40 Y N 1 F N
+F0 "J" 0 500 50 H V C CNN
+F1 "Connector_Generic_Conn_01x09" 0 -500 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+$FPLIST
+ Connector*:*_1x??_*
+$ENDFPLIST
+DRAW
+S -50 -395 0 -405 1 1 6 N
+S -50 -295 0 -305 1 1 6 N
+S -50 -195 0 -205 1 1 6 N
+S -50 -95 0 -105 1 1 6 N
+S -50 5 0 -5 1 1 6 N
+S -50 105 0 95 1 1 6 N
+S -50 205 0 195 1 1 6 N
+S -50 305 0 295 1 1 6 N
+S -50 405 0 395 1 1 6 N
+S -50 450 50 -450 1 1 10 f
+X Pin_1 1 -200 400 150 R 50 50 1 1 P
+X Pin_2 2 -200 300 150 R 50 50 1 1 P
+X Pin_3 3 -200 200 150 R 50 50 1 1 P
+X Pin_4 4 -200 100 150 R 50 50 1 1 P
+X Pin_5 5 -200 0 150 R 50 50 1 1 P
+X Pin_6 6 -200 -100 150 R 50 50 1 1 P
+X Pin_7 7 -200 -200 150 R 50 50 1 1 P
+X Pin_8 8 -200 -300 150 R 50 50 1 1 P
+X Pin_9 9 -200 -400 150 R 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
@@ -404,19 +479,6 @@ X SWITCH SW -200 -400 200 R 40 40 0 0 B
 ENDDRAW
 ENDDEF
 #
-# Pad_Pad
-#
-DEF Pad_Pad J 0 40 Y Y 1 F N
-F0 "J" 0 -200 60 H V C CNN
-F1 "Pad_Pad" 0 0 60 H V C CNN
-F2 "" 0 0 60 H I C CNN
-F3 "" 0 0 60 H I C CNN
-DRAW
-S -50 -50 50 -150 0 1 0 f
-X ~ 1 250 -100 200 L 50 50 1 1 P
-ENDDRAW
-ENDDEF
-#
 # SN74LVC2T45_SN74LVC2T45
 #
 DEF SN74LVC2T45_SN74LVC2T45 U 0 40 Y Y 1 L N
@@ -546,7 +608,36 @@ X PGND 5 -700 -700 200 R 40 40 0 0 P
 X VBAT 6 -700 800 200 R 40 40 0 0 W
 X LBI 7 -700 300 200 R 40 40 0 0 O
 X SYNC 8 -700 200 200 R 40 40 0 0 I
-X EN 9 -700 600 200 R 40 40 0 0 W
+X EN 9 -700 600 200 R 40 40 0 0 I
+ENDDRAW
+ENDDEF
+#
+# dk_Optical-Sensors-Ambient-Light-IR-UV-Sensors_APDS-9960
+#
+DEF dk_Optical-Sensors-Ambient-Light-IR-UV-Sensors_APDS-9960 U 0 20 Y Y 1 F N
+F0 "U" 100 350 60 H V C CNN
+F1 "dk_Optical-Sensors-Ambient-Light-IR-UV-Sensors_APDS-9960" 0 -350 60 H V L CNN
+F2 "digikey-footprints:Ambient_Prox_APDS-9960" 200 200 60 H I L CNN
+F3 "https://docs.broadcom.com/docs/AV02-4191EN" 200 300 60 H I L CNN
+F4 "516-3480-1-ND" 200 400 60 H I L CNN "Digi-Key_PN"
+F5 "APDS-9960" 200 500 60 H I L CNN "MPN"
+F6 "Sensors, Transducers" 200 600 60 H I L CNN "Category"
+F7 "Optical Sensors - Ambient Light, IR, UV Sensors" 200 700 60 H I L CNN "Family"
+F8 "https://docs.broadcom.com/docs/AV02-4191EN" 200 800 60 H I L CNN "DK_Datasheet_Link"
+F9 "/product-detail/en/broadcom-limited/APDS-9960/516-3480-1-ND/6677150" 200 900 60 H I L CNN "DK_Detail_Page"
+F10 "SENSOR OPT 560NM AMBIENT MODULE" 200 1000 60 H I L CNN "Description"
+F11 "Broadcom Limited" 200 1100 60 H I L CNN "Manufacturer"
+F12 "Active" 200 1200 60 H I L CNN "Status"
+DRAW
+S -200 300 200 -300 0 1 0 f
+X SDA 1 -300 100 100 R 50 50 1 1 B
+X INT 2 300 200 100 L 50 50 1 1 O
+X LDR 3 300 100 100 L 50 50 1 1 O
+X LEDK 4 300 0 100 L 50 50 1 1 P
+X LEDA 5 300 -100 100 L 50 50 1 1 P
+X GND 6 -100 -400 100 U 50 50 1 1 W
+X SCL 7 -300 0 100 R 50 50 1 1 I
+X VDD 8 -100 400 100 D 50 50 1 1 W
 ENDDRAW
 ENDDEF
 #

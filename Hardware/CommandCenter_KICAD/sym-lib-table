@@ -14,6 +14,5 @@
   (lib (name STM32L433)(type Legacy)(uri ${KIPRJMOD}/Libraries/Symbols/STM32L433.lib)(options "")(descr ""))
   (lib (name TPS61030)(type Legacy)(uri ${KIPRJMOD}/Libraries/Symbols/TPS61030.lib)(options "")(descr ""))
   (lib (name CommandCenter_KICAD-rescue)(type Legacy)(uri ${KIPRJMOD}/CommandCenter_KICAD-rescue.lib)(options "")(descr ""))
-  (lib (name Audio_Ctrl-rescue)(type Legacy)(uri ${KIPRJMOD}/Audio_Ctrl-rescue.lib)(options "")(descr ""))
   (lib (name max)(type Legacy)(uri ${KIPRJMOD}/Libraries/Symbols/max.lib)(options "")(descr ""))
 )

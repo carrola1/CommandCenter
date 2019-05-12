@@ -1,0 +1,8 @@
+r = 36
+xoff = 165
+yoff = 60+36
+ang = 2*pi/20
+pix = 20
+
+x = r*cos(ang*pix)+xoff
+y = yoff-r*sin(ang*pix)

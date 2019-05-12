@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name CommandCenter)(type KiCad)(uri C:/GitHub/CommandCenter/Hardware/CommandCenter_KICAD/Libraries/Footprints/CommandCenter.pretty)(options "")(descr ""))
+)
