@@ -1,0 +1,53 @@
+APDS9960.h:269:13:uint8_t APDS9960::enable::get()	16	static
+APDS9960.h:285:13:uint8_t APDS9960::pers::get()	16	static
+APDS9960.h:307:13:uint8_t APDS9960::ppulse::get()	16	static
+APDS9960.h:321:13:uint8_t APDS9960::control::get()	16	static
+APDS9960.h:337:13:uint8_t APDS9960::config2::get()	16	static
+APDS9960.h:382:10:void APDS9960::status::set(uint8_t)	16	static
+APDS9960.h:443:13:uint8_t APDS9960::gconf1::get()	16	static
+APDS9960.h:460:13:uint8_t APDS9960::gconf2::get()	16	static
+APDS9960.h:474:13:uint8_t APDS9960::gpulse::get()	16	static
+APDS9960.h:484:13:uint8_t APDS9960::gconf3::get()	16	static
+APDS9960.h:502:13:uint8_t APDS9960::gconf4::get()	16	static
+APDS9960.h:522:10:void APDS9960::gstatus::set(uint8_t)	16	static
+APDS9960.cpp:53:7:float powf(float, float)	24	static
+APDS9960.cpp:65:6:void APDS9960::enable(bool)	16	static
+APDS9960.cpp:82:6:bool APDS9960::begin(uint16_t, apds9960AGain_t, uint8_t)	32	static
+APDS9960.cpp:130:6:void APDS9960::setADCIntegrationTime(uint16_t)	32	static
+APDS9960.cpp:150:7:float APDS9960::getADCIntegrationTime()	32	static
+APDS9960.cpp:167:6:void APDS9960::setADCGain(apds9960AGain_t)	16	static
+APDS9960.cpp:178:17:apds9960AGain_t APDS9960::getADCGain()	16	static
+APDS9960.cpp:187:6:void APDS9960::setProxGain(apds9960PGain_t)	16	static
+APDS9960.cpp:198:17:apds9960PGain_t APDS9960::getProxGain()	16	static
+APDS9960.cpp:209:6:void APDS9960::setProxPulse(apds9960PPulseLen_t, uint8_t)	16	static
+APDS9960.cpp:227:6:void APDS9960::enableProximity(bool)	16	static
+APDS9960.cpp:236:6:void APDS9960::enableProximityInterrupt()	16	static
+APDS9960.cpp:245:6:void APDS9960::disableProximityInterrupt()	16	static
+APDS9960.cpp:259:6:void APDS9960::setProximityInterruptThreshold(uint8_t, uint8_t, uint8_t)	24	static
+APDS9960.cpp:275:6:bool APDS9960::getProximityInterrupt()	24	static
+APDS9960.cpp:284:9:uint8_t APDS9960::readProximity()	16	static
+APDS9960.cpp:290:6:bool APDS9960::gestureValid()	24	static
+APDS9960.cpp:301:6:void APDS9960::setGestureDimensions(uint8_t)	16	static
+APDS9960.cpp:312:6:void APDS9960::setGestureFIFOThreshold(uint8_t)	16	static
+APDS9960.cpp:323:6:void APDS9960::setGestureGain(uint8_t)	16	static
+APDS9960.cpp:333:6:void APDS9960::setGestureProximityThreshold(uint8_t)	16	static
+APDS9960.cpp:348:6:void APDS9960::setGestureOffset(uint8_t, uint8_t, uint8_t, uint8_t)	24	static
+APDS9960.cpp:362:6:void APDS9960::enableGesture(bool)	16	static
+APDS9960.cpp:375:6:void APDS9960::resetCounts()	16	static
+APDS9960.cpp:391:6:void APDS9960::setLED(apds9960LedDrive_t, apds9960LedBoost_t)	16	static
+APDS9960.cpp:406:6:void APDS9960::enableColor(bool)	16	static
+APDS9960.cpp:415:6:bool APDS9960::colorDataReady()	24	static
+APDS9960.cpp:431:6:void APDS9960::getColorData(uint16_t*, uint16_t*, uint16_t*, uint16_t*)	24	static
+APDS9960.cpp:450:10:uint16_t APDS9960::calculateColorTemperature(uint16_t, uint16_t, uint16_t)	72	static
+APDS9960.cpp:490:10:uint16_t APDS9960::calculateLux(uint16_t, uint16_t, uint16_t)	48	static
+APDS9960.cpp:503:6:void APDS9960::enableColorInterrupt()	16	static
+APDS9960.cpp:511:6:void APDS9960::disableColorInterrupt()	16	static
+APDS9960.cpp:519:6:void APDS9960::clearInterrupt()	16	static
+APDS9960.cpp:530:6:void APDS9960::setIntLimits(uint16_t, uint16_t)	16	static
+APDS9960.cpp:544:6:void APDS9960::write8(uint8_t, uint8_t)	16	static
+APDS9960.cpp:554:9:uint8_t APDS9960::read8(uint8_t)	32	static
+APDS9960.cpp:567:10:uint32_t APDS9960::read32(uint8_t)	32	static
+APDS9960.cpp:580:10:uint16_t APDS9960::read16(uint8_t)	32	static
+APDS9960.cpp:593:10:uint16_t APDS9960::read16R(uint8_t)	32	static
+APDS9960.cpp:611:6:void APDS9960::read(uint8_t, uint8_t*, uint8_t)	48	static
+APDS9960.cpp:630:6:void APDS9960::write(uint8_t, uint8_t*, uint8_t)	40	static

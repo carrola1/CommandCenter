@@ -212,19 +212,6 @@ F 3 "" H 950 1580 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C?
-U 1 1 5CF7406D
-P 700 1580
-AR Path="/5CF7406D" Ref="C?"  Part="1" 
-AR Path="/5CF2E53C/5CF7406D" Ref="C18"  Part="1" 
-F 0 "C18" H 725 1680 50  0000 L CNN
-F 1 "0.1u" H 725 1480 50  0000 L CNN
-F 2 "Capacitor_SMD:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder" H 738 1430 50  0001 C CNN
-F 3 "" H 700 1580 50  0001 C CNN
-	1    700  1580
-	1    0    0    -1  
-$EndComp
-$Comp
 L power:+3.3V #PWR?
 U 1 1 5CF74073
 P 1700 1330
@@ -369,20 +356,12 @@ Wire Wire Line
 Wire Wire Line
 	1700 1780 1700 1830
 Wire Wire Line
-	700  1730 700  1780
-Wire Wire Line
-	700  1780 950  1780
-Wire Wire Line
 	950  1780 1200 1780
 Wire Wire Line
 	1200 1780 1450 1780
 Wire Wire Line
 	1450 1780 1700 1780
 Connection ~ 1700 1780
-Wire Wire Line
-	700  1430 700  1380
-Wire Wire Line
-	700  1380 950  1380
 Wire Wire Line
 	950  1380 1200 1380
 Wire Wire Line
@@ -398,10 +377,8 @@ Wire Wire Line
 Connection ~ 1200 1380
 Wire Wire Line
 	950  1430 950  1380
-Connection ~ 950  1380
 Wire Wire Line
 	950  1730 950  1780
-Connection ~ 950  1780
 Wire Wire Line
 	1200 1730 1200 1780
 Connection ~ 1200 1780
@@ -1242,14 +1219,9 @@ F 3 "" H 9560 1030 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	9560 1030 9560 1060
-Wire Wire Line
 	9400 1080 9400 1060
 Wire Wire Line
 	9400 1060 9560 1060
-Connection ~ 9560 1060
-Wire Wire Line
-	9560 1060 9560 1080
 Wire Wire Line
 	9400 1060 9240 1060
 Wire Wire Line
@@ -1443,12 +1415,9 @@ $EndComp
 Wire Wire Line
 	9720 1080 9720 1060
 Wire Wire Line
-	9720 1060 9570 1060
-Wire Wire Line
 	9720 1060 9880 1060
 Wire Wire Line
 	10200 1060 10200 1080
-Connection ~ 9720 1060
 Wire Wire Line
 	9880 1080 9880 1060
 Connection ~ 9880 1060
@@ -1747,4 +1716,12 @@ F 3 "" H 5700 6890 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	5700 6830 5700 6890
+Wire Wire Line
+	9560 1030 9560 1060
+Wire Wire Line
+	9560 1060 9720 1060
+Connection ~ 9560 1060
+Wire Wire Line
+	9560 1060 9560 1080
+Connection ~ 9720 1060
 $EndSCHEMATC

@@ -359,17 +359,6 @@ F 3 "" H 1810 4460 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C4
-U 1 1 5ACF4FF3
-P 1560 4460
-F 0 "C4" H 1585 4560 50  0000 L CNN
-F 1 "0.1u" H 1585 4360 50  0000 L CNN
-F 2 "Capacitor_SMD:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder" H 1598 4310 50  0001 C CNN
-F 3 "" H 1560 4460 50  0001 C CNN
-	1    1560 4460
-	1    0    0    -1  
-$EndComp
-$Comp
 L Device:C C3
 U 1 1 5ACF5051
 P 1310 4460
@@ -637,10 +626,6 @@ Wire Wire Line
 	810  4660 1060 4660
 Wire Wire Line
 	1060 4660 1310 4660
-Wire Wire Line
-	1310 4660 1560 4660
-Wire Wire Line
-	1560 4660 1810 4660
 Connection ~ 1810 4660
 Wire Wire Line
 	810  4310 810  4260
@@ -648,14 +633,7 @@ Wire Wire Line
 	810  4260 1060 4260
 Wire Wire Line
 	1060 4260 1310 4260
-Wire Wire Line
-	1310 4260 1560 4260
-Wire Wire Line
-	1560 4260 1810 4260
 Connection ~ 1810 4260
-Wire Wire Line
-	1560 4310 1560 4260
-Connection ~ 1560 4260
 Wire Wire Line
 	1310 4310 1310 4260
 Connection ~ 1310 4260
@@ -668,9 +646,6 @@ Connection ~ 1060 4660
 Wire Wire Line
 	1310 4610 1310 4660
 Connection ~ 1310 4660
-Wire Wire Line
-	1560 4610 1560 4660
-Connection ~ 1560 4660
 Wire Wire Line
 	2710 6250 1710 6250
 Wire Wire Line
@@ -1573,4 +1548,8 @@ Wire Wire Line
 	8610 1150 8610 1300
 Wire Wire Line
 	1480 2950 1480 3000
+Wire Wire Line
+	1310 4260 1810 4260
+Wire Wire Line
+	1310 4660 1810 4660
 $EndSCHEMATC

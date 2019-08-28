@@ -1,0 +1,2 @@
+ring_effects.cpp:4:6:void ring_loop_animation(DotStar&, uint8_t, RGB_VALS)	48	static
+ring_effects.cpp:24:6:void ring_set_all_pixels(DotStar&, RGB_VALS)	48	static

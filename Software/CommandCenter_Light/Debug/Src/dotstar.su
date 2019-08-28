@@ -1,0 +1,17 @@
+dotstar.cpp:32:1:DotStar::DotStar(uint8_t, uint8_t)	16	static
+dotstar.cpp:39:1:DotStar::~DotStar()	16	static
+dotstar.cpp:43:6:void DotStar::begin()	16	static
+dotstar.cpp:51:6:void DotStar::updateLength(uint8_t)	24	static
+dotstar.cpp:62:6:void DotStar::sw_spi_init()	16	static
+dotstar.cpp:67:6:void DotStar::sw_spi_end()	16	static
+dotstar.cpp:72:6:void DotStar::sw_spi_out(uint8_t)	24	static
+dotstar.cpp:94:6:void DotStar::show()	24	static
+dotstar.cpp:117:6:void DotStar::clear()	16	static
+dotstar.cpp:124:6:void DotStar::setPixelColor(uint8_t, uint8_t, uint8_t, uint8_t)	32	static
+dotstar.cpp:135:6:void DotStar::setPixelColor(uint8_t, uint32_t)	32	static
+dotstar.cpp:145:10:uint32_t DotStar::Color(uint8_t, uint8_t, uint8_t)	24	static
+dotstar.cpp:150:10:uint32_t DotStar::getPixelColor(uint8_t) const	24	static
+dotstar.cpp:158:9:uint8_t DotStar::numPixels()	16	static
+dotstar.cpp:169:6:void DotStar::setBrightness(uint8_t)	16	static
+dotstar.cpp:179:9:uint8_t DotStar::getBrightness() const	16	static
+dotstar.cpp:186:10:uint8_t* DotStar::getPixels() const	16	static

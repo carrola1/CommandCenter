@@ -1,4 +1,4 @@
-16500840738207093
+16489957660530336
 Button_Switch_Keyboard
 SW_Cherry_MX_1.00u_PCB
 Cherry MX keyswitch, 1.00u, PCB mount, http://cherryamericas.com/wp-content/uploads/2014/12/mx_cat.pdf
@@ -5641,55 +5641,6 @@ C Rect series Radial pin pitch 37.50mm  length 41.5mm width 40mm Capacitor
 0
 2
 2
-CommandCenter
-APA102_hand_solder
-
-
-0
-6
-6
-CommandCenter
-JLink_Mini_0p05
-Through hole straight socket strip, 2x05, 1.27mm pitch, double rows
-Through hole socket strip THT 2x05 1.27mm double row
-0
-10
-10
-CommandCenter
-MOLEX_503182-1852
-
-
-0
-15
-15
-CommandCenter
-QFN50P300X300X80-17N
-
-
-0
-17
-17
-CommandCenter
-QFP50P900X900X160-48N
-
-
-0
-48
-48
-CommandCenter
-SOP50P310X90-8N
-
-
-0
-8
-8
-CommandCenter
-SOP65P640X120-17N
-
-
-0
-17
-17
 Connector
 Banana_Jack_1Pin
 Single banana socket, footprint - 6mm drill
