@@ -17,6 +17,7 @@ C_SRCS += \
 CPP_SRCS += \
 ../Src/APDS9960.cpp \
 ../Src/LedControl.cpp \
+../Src/bar_graph.cpp \
 ../Src/dotstar.cpp \
 ../Src/main.cpp \
 ../Src/ring_effects.cpp 
@@ -24,6 +25,7 @@ CPP_SRCS += \
 OBJS += \
 ./Src/APDS9960.o \
 ./Src/LedControl.o \
+./Src/bar_graph.o \
 ./Src/dotstar.o \
 ./Src/gpio.o \
 ./Src/i2c.o \
@@ -51,6 +53,7 @@ C_DEPS += \
 CPP_DEPS += \
 ./Src/APDS9960.d \
 ./Src/LedControl.d \
+./Src/bar_graph.d \
 ./Src/dotstar.d \
 ./Src/main.d \
 ./Src/ring_effects.d 
@@ -61,6 +64,8 @@ Src/APDS9960.o: ../Src/APDS9960.cpp
 	arm-none-eabi-g++ "$<" -mcpu=cortex-m0plus -std=gnu++14 -g3 -DUSE_HAL_DRIVER -DSTM32L052xx -DDEBUG -c -I../Inc -I../Drivers/CMSIS/Include -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -O0 -ffunction-sections -fdata-sections -fno-exceptions -fno-rtti -fno-threadsafe-statics -fno-use-cxa-atexit -Wall -fstack-usage -MMD -MP -MF"Src/APDS9960.d" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@"
 Src/LedControl.o: ../Src/LedControl.cpp
 	arm-none-eabi-g++ "$<" -mcpu=cortex-m0plus -std=gnu++14 -g3 -DUSE_HAL_DRIVER -DSTM32L052xx -DDEBUG -c -I../Inc -I../Drivers/CMSIS/Include -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -O0 -ffunction-sections -fdata-sections -fno-exceptions -fno-rtti -fno-threadsafe-statics -fno-use-cxa-atexit -Wall -fstack-usage -MMD -MP -MF"Src/LedControl.d" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@"
+Src/bar_graph.o: ../Src/bar_graph.cpp
+	arm-none-eabi-g++ "$<" -mcpu=cortex-m0plus -std=gnu++14 -g3 -DUSE_HAL_DRIVER -DSTM32L052xx -DDEBUG -c -I../Inc -I../Drivers/CMSIS/Include -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -O0 -ffunction-sections -fdata-sections -fno-exceptions -fno-rtti -fno-threadsafe-statics -fno-use-cxa-atexit -Wall -fstack-usage -MMD -MP -MF"Src/bar_graph.d" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@"
 Src/dotstar.o: ../Src/dotstar.cpp
 	arm-none-eabi-g++ "$<" -mcpu=cortex-m0plus -std=gnu++14 -g3 -DUSE_HAL_DRIVER -DSTM32L052xx -DDEBUG -c -I../Inc -I../Drivers/CMSIS/Include -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -O0 -ffunction-sections -fdata-sections -fno-exceptions -fno-rtti -fno-threadsafe-statics -fno-use-cxa-atexit -Wall -fstack-usage -MMD -MP -MF"Src/dotstar.d" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@"
 Src/gpio.o: ../Src/gpio.c

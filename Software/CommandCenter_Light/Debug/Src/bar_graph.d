@@ -1,5 +1,5 @@
-Src/main.o: ../Src/main.cpp ../Inc/main.h \
- ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h \
+Src/bar_graph.o: ../Src/bar_graph.cpp ../Inc/bar_graph.hpp \
+ ../Inc/LedControl.h ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h \
  ../Inc/stm32l0xx_hal_conf.h \
  ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_rcc.h \
  ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_def.h \
@@ -25,12 +25,12 @@ Src/main.o: ../Src/main.cpp ../Inc/main.h \
  ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_pwr_ex.h \
  ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_spi.h \
  ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_uart.h \
- ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_uart_ex.h ../Inc/i2c.h \
- ../Inc/main.h ../Inc/spi.h ../Inc/gpio.h ../Inc/dotstar.hpp \
- ../Inc/ring_effects.hpp ../Inc/dotstar.hpp ../Inc/bar_graph.hpp \
- ../Inc/LedControl.h ../Inc/APDS9960.h
+ ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_uart_ex.h ../Inc/spi.h \
+ ../Inc/main.h
 
-../Inc/main.h:
+../Inc/bar_graph.hpp:
+
+../Inc/LedControl.h:
 
 ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h:
 
@@ -86,22 +86,6 @@ Src/main.o: ../Src/main.cpp ../Inc/main.h \
 
 ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_uart_ex.h:
 
-../Inc/i2c.h:
-
-../Inc/main.h:
-
 ../Inc/spi.h:
 
-../Inc/gpio.h:
-
-../Inc/dotstar.hpp:
-
-../Inc/ring_effects.hpp:
-
-../Inc/dotstar.hpp:
-
-../Inc/bar_graph.hpp:
-
-../Inc/LedControl.h:
-
-../Inc/APDS9960.h:
+../Inc/main.h:

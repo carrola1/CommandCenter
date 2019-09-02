@@ -175,7 +175,7 @@ public:
   APDS9960(){};
   ~APDS9960(){};
 
-  bool begin(uint16_t iTimeMS = 10, apds9960AGain_t = APDS9960_AGAIN_4X,
+  bool begin(uint16_t iTimeMS = 200, apds9960AGain_t = APDS9960_AGAIN_64X,
                 uint8_t addr = APDS9960_ADDRESS);
   void setADCIntegrationTime(uint16_t iTimeMS);
   float getADCIntegrationTime();
@@ -220,6 +220,8 @@ public:
   // turn on/off elements
   void enable(bool en = true);
 
+  uint8_t read8(uint8_t reg);
+
 private:
   uint8_t _i2caddr;
   uint8_t tempbuf[4];
@@ -229,7 +231,7 @@ private:
   uint16_t read16R(uint8_t reg);
 
   void write8(uint8_t reg, uint8_t value);
-  uint8_t read8(uint8_t reg);
+  //uint8_t read8(uint8_t reg);
 
   uint8_t gestCnt;
 
@@ -240,7 +242,7 @@ private:
   uint8_t RCount;
 
   void read(uint8_t reg, uint8_t *buf, uint8_t num);
-  void write(uint8_t reg, uint8_t *buf, uint8_t num);
+  void write(uint8_t reg, uint8_t value, uint8_t num);
   void _i2c_init();
 
   struct enable {

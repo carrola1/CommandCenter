@@ -517,7 +517,7 @@ void APDS9960::disableColorInterrupt() {
  *  @brief  Clears interrupt
  */
 void APDS9960::clearInterrupt() {
-  this->write(APDS9960_AICLEAR, NULL, 0);
+  this->write(APDS9960_AICLEAR, 0, 1);
 }
 
 /*!
@@ -542,7 +542,7 @@ void APDS9960::setIntLimits(uint16_t low, uint16_t high) {
  *          Value to write
  */
 void APDS9960::write8(uint8_t reg, uint8_t value) {
-  this->write(reg, &value, 1);
+  this->write(reg, value, 2);
 }
 
 /*!
@@ -627,7 +627,7 @@ void APDS9960::read(uint8_t reg, uint8_t *buf, uint8_t num) {
  *  @param  num
  *          Number of bytes
  */
-void APDS9960::write(uint8_t reg, uint8_t *buf, uint8_t num) {
-  HAL_I2C_Master_Transmit(&hi2c1, APDS9960_ADDRESS, &reg, 1, HAL_MAX_DELAY);
-  HAL_I2C_Master_Transmit(&hi2c1, APDS9960_ADDRESS, buf, num, HAL_MAX_DELAY);
+void APDS9960::write(uint8_t reg, uint8_t value, uint8_t num) {
+  uint8_t writedata[2] = {reg, value};
+  HAL_I2C_Master_Transmit(&hi2c1, APDS9960_ADDRESS, &writedata[0], num, HAL_MAX_DELAY);
 }

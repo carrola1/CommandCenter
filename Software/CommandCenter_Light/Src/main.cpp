@@ -54,7 +54,7 @@
 #include "gpio.h"
 #include "dotstar.hpp"
 #include "ring_effects.hpp"
-#include "LedControl.h"
+#include "bar_graph.hpp"
 #include "APDS9960.h"
 
 /* USER CODE BEGIN Includes */
@@ -126,17 +126,9 @@ int main(void)
   ring_set_all_pixels(ring, rgb_default);
 
   // Initialize LED driver
-  LedControl lc=LedControl(1);
-  int ledCnt = 0;
-  /*
-   The MAX72XX is in power-saving mode on startup,
-   we have to do a wakeup call
-   */
-  lc.shutdown(0,false);
-  /* Set the brightness to a medium values */
-  lc.setIntensity(0,8);
-  /* and clear the display */
-  lc.clearDisplay(0);
+  BarGraph bg=BarGraph(8,40);
+  bg.begin();
+  uint8_t bg_sw[8];
 
   // Setup Color Sensor
   APDS9960 apds;
@@ -159,24 +151,40 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	
-    if (ledCnt == 8) {
-        // Do nothing
-    } else {
-      lc.setLed(0,ledCnt,0,true);
-      ledCnt++;
-    }
+    
+    // read bar graph switch inputs and update graph 
+    bg_sw[0] = !HAL_GPIO_ReadPin(BG_SW_0_GPIO_Port, BG_SW_0_Pin);
+    bg_sw[1] = !HAL_GPIO_ReadPin(BG_SW_1_GPIO_Port, BG_SW_1_Pin);
+    bg_sw[2] = !HAL_GPIO_ReadPin(BG_SW_2_GPIO_Port, BG_SW_2_Pin);
+    bg_sw[3] = !HAL_GPIO_ReadPin(BG_SW_3_GPIO_Port, BG_SW_3_Pin);
+    bg_sw[4] = !HAL_GPIO_ReadPin(BG_SW_4_GPIO_Port, BG_SW_4_Pin);
+    bg_sw[5] = !HAL_GPIO_ReadPin(BG_SW_5_GPIO_Port, BG_SW_5_Pin);
+    bg_sw[6] = !HAL_GPIO_ReadPin(BG_SW_6_GPIO_Port, BG_SW_6_Pin);
+    bg_sw[7] = !HAL_GPIO_ReadPin(BG_SW_7_GPIO_Port, BG_SW_7_Pin);
+    bg.update(&bg_sw[0]);
     
     //wait for color data to be ready
-    while(!apds.colorDataReady()){
-      HAL_Delay(5);
-    }
+    //while(!apds.colorDataReady()){
+    //  HAL_Delay(5);
+    //}
     //get the data and print the different channels
+    
     apds.getColorData(&r, &g, &b, &c);
 
-    rgb_new.r = (uint8_t)(r >> 8);
-    rgb_new.g = (uint8_t)(g >> 8);
-    rgb_new.b = (uint8_t)(b >> 8);
+    if ((r > g) && (r > b)) {
+      rgb_new.r = 100;
+      rgb_new.g = 0;
+      rgb_new.b = 0;
+    } else if ((g > r) && (g > b)) {
+      rgb_new.r = 0;
+      rgb_new.g = 100;
+      rgb_new.b = 0;
+    } else {
+      rgb_new.r = 0;
+      rgb_new.g = 0;
+      rgb_new.b = 100;
+    }
+    
     ring_set_all_pixels(ring, rgb_new);
 
     HAL_Delay(500);

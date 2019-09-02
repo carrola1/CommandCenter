@@ -1,0 +1,20 @@
+Add white LED next to color sensor. TCS34725 breakout board I used on the space toy had an LED next to the sensor.
+I thought it was integrated into the IC.
+
+Rotate SD Card
+
+Make sure to use tantalum capacitor on boost regulator output!
+
+Add some test points on SPI and I2C dummy.
+
+The audio amps are not setup for stereo. They are both configured for left channel mono.
+Not a big deal, but should go ahead and fix.
+
+Switch to TXS0104EPWR for the level translator. The TXB0104PW I origially selected does not
+like VCCA to be up before VCCB.
+
+Extend the pads of the color sensor to make it easier to solder.
+
+Consider replacing bar graphs with DotStars to save cost.
+
+Consider adding an 8-segment display to count bar graph position.
