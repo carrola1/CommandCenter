@@ -18,3 +18,5 @@ Extend the pads of the color sensor to make it easier to solder.
 Consider replacing bar graphs with DotStars to save cost.
 
 Consider adding an 8-segment display to count bar graph position.
+
+Consider adding LC filters to audio outputs.
