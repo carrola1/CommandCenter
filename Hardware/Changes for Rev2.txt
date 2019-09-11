@@ -20,3 +20,5 @@ Consider replacing bar graphs with DotStars to save cost.
 Consider adding an 8-segment display to count bar graph position.
 
 Consider adding LC filters to audio outputs.
+
+Need to change motor control output to a TIM controlled pin.

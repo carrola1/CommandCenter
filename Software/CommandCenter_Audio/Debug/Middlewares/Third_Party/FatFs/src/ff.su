@@ -1,0 +1,13 @@
+ff.c:2114:5:get_ldnumber	0	static
+ff.c:2372:9:validate	8	static
+ff.c:729:9:move_window	16	static
+ff.c:2175:6:check_fs	8	static
+ff.c:2203:9:find_volume.isra.3	56	static
+ff.c:800:7:clust2sect	0	static
+ff.c:818:7:get_fat	32	static
+ff.c:1080:9:dir_sdi.constprop	16	static
+ff.c:2402:9:f_mount	24	static
+ff.c:2449:9:f_open	120	static
+ff.c:2586:9:f_read	40	static
+ff.c:2857:9:f_close	8	static
+ff.c:3029:9:f_lseek	32	static

@@ -72,12 +72,14 @@ void Error_Handler(void);
 #define MOTOR_SW_0_GPIO_Port GPIOB
 #define MOTOR_SW_1_Pin GPIO_PIN_1
 #define MOTOR_SW_1_GPIO_Port GPIOB
-#define MOTOR_SW_2_Pin GPIO_PIN_2
-#define MOTOR_SW_2_GPIO_Port GPIOB
+#define MOTOR_CTRL_Pin GPIO_PIN_2
+#define MOTOR_CTRL_GPIO_Port GPIOB
 #define TEST_LED_Pin GPIO_PIN_11
 #define TEST_LED_GPIO_Port GPIOA
 #define PWR_ENB_Pin GPIO_PIN_3
 #define PWR_ENB_GPIO_Port GPIOB
+#define MOTOR_SW_2_Pin GPIO_PIN_8
+#define MOTOR_SW_2_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

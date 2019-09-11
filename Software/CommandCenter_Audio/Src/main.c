@@ -24,6 +24,7 @@
 #include "dma.h"
 #include "diskio.h"
 #include "ff.h"
+#include "lptim.h"
 #include "i2s.h"
 #include "spi.h"
 #include "usart.h"
@@ -100,13 +101,19 @@ int main(void)
   MX_I2S2_Init();
   MX_SPI1_Init();
   MX_USART1_UART_Init();
+  MX_LPTIM1_Init();
   /* USER CODE BEGIN 2 */
+  HAL_Delay(100);
   HAL_GPIO_WritePin(PWR_ENB_GPIO_Port, PWR_ENB_Pin, GPIO_PIN_SET);
   
   // Mount SD Card
   FRESULT fr;     /* FatFs return code */
   HAL_GPIO_WritePin(SD_CS_GPIO_Port, SD_CS_Pin, GPIO_PIN_SET);
   fr = f_mount(&FatFs, "", 1);
+  
+  // Setup Motor PWM
+  HAL_LPTIM_PWM_Start(&hlptim1, 0x1388, 0x00FA);
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -166,8 +173,9 @@ void SystemClock_Config(void)
     _Error_Handler(__FILE__, __LINE__);
   }
 
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C1;
-  PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_HSI;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1|RCC_PERIPHCLK_LPTIM1;
+  PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
+  PeriphClkInit.LptimClockSelection = RCC_LPTIM1CLKSOURCE_PCLK;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
