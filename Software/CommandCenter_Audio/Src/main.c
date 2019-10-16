@@ -114,15 +114,35 @@ int main(void)
   // Setup Motor PWM
   HAL_LPTIM_PWM_Start(&hlptim1, 0x1388, 0x00FA);
   
+  // Play wave file
+  const char audio_file[32] = "red.wav";
+  play_wav(audio_file);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    const char audio_file[32] = "red.wav";
-	play_wav(audio_file);
-    HAL_Delay(20000);
+    uint8_t motor_state_0;
+    uint8_t motor_state_1;
+    uint8_t motor_state_2;
+    uint8_t motor_state_last = 3;
+    motor_state_0 = HAL_GPIO_ReadPin(MOTOR_SW_0_GPIO_Port, MOTOR_SW_0_Pin);
+    motor_state_1 = HAL_GPIO_ReadPin(MOTOR_SW_1_GPIO_Port, MOTOR_SW_1_Pin);
+    motor_state_2 = HAL_GPIO_ReadPin(MOTOR_SW_2_GPIO_Port, MOTOR_SW_2_Pin);
+    if ((motor_state_0 == 0) & (motor_state_last != 0)) {
+      __HAL_LPTIM_COMPARE_SET(&hlptim1, 0x01F4);
+      motor_state_last = 0;
+    } else if ((motor_state_1 == 0) & (motor_state_last != 1)) {
+      __HAL_LPTIM_COMPARE_SET(&hlptim1, 0x0177);
+      motor_state_last = 1;
+    } else if ((motor_state_2 == 0) & (motor_state_last != 2)) {
+      __HAL_LPTIM_COMPARE_SET(&hlptim1, 0x00FA);
+      motor_state_last = 2;
+    }
+    
+    HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

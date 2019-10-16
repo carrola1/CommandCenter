@@ -114,7 +114,7 @@ int main(void)
   HAL_Delay(200);
 
   // Setup and initialize Dotstars
-  DotStar ring = DotStar(1, DOTSTAR_RBG);
+  DotStar ring = DotStar(20, DOTSTAR_RBG);
   ring.begin(); // Initialize pins for output
   RGB_VALS rgb_off;
   rgb_off.r = 0; rgb_off.g = 0; rgb_off.b = 0;

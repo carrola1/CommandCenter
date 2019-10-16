@@ -22,3 +22,11 @@ Consider adding an 8-segment display to count bar graph position.
 Consider adding LC filters to audio outputs.
 
 Need to change motor control output to a TIM controlled pin.
+
+The TPS61030 datasheet suggests a 2.2uF ceramic in parallel with the large tantalum output cap for max output power.
+
+The TPS61030 datasheet suggests a larger input capacitance (47uF) if input supply is located far away.
+
+Improve layout of TPS61030.
+
+Consider replacing TPS61030 with integrated solution (LTM4661).

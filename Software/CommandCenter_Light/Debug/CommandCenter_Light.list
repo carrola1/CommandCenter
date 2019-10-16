@@ -11887,11 +11887,11 @@ int main(void)
  8004818:	f7fc fd04 	bl	8001224 <HAL_Delay>
 
   // Setup and initialize Dotstars
-  DotStar ring = DotStar(1, DOTSTAR_RBG);
+  DotStar ring = DotStar(20, DOTSTAR_RBG);
  800481c:	2484      	movs	r4, #132	; 0x84
  800481e:	193b      	adds	r3, r7, r4
  8004820:	2218      	movs	r2, #24
- 8004822:	2101      	movs	r1, #1
+ 8004822:	2114      	movs	r1, #20
  8004824:	0018      	movs	r0, r3
  8004826:	f7ff fcd0 	bl	80041ca <_ZN7DotStarC1Ehh>
   ring.begin(); // Initialize pins for output
@@ -12497,9 +12497,9 @@ void MX_SPI1_Init(void)
  8004bea:	2280      	movs	r2, #128	; 0x80
  8004bec:	0092      	lsls	r2, r2, #2
  8004bee:	619a      	str	r2, [r3, #24]
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
  8004bf0:	4b0c      	ldr	r3, [pc, #48]	; (8004c24 <MX_SPI1_Init+0x68>)
- 8004bf2:	2208      	movs	r2, #8
+ 8004bf2:	2210      	movs	r2, #16
  8004bf4:	61da      	str	r2, [r3, #28]
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
  8004bf6:	4b0b      	ldr	r3, [pc, #44]	; (8004c24 <MX_SPI1_Init+0x68>)
