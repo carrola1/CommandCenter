@@ -56,6 +56,7 @@
 #include "ring_effects.hpp"
 #include "bar_graph.hpp"
 #include "APDS9960.h"
+#include "usart.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -109,10 +110,20 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_SPI1_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
   HAL_Delay(200);
 
+  // Remember switch states
+  GPIO_PinState sw_states_old[4];
+  sw_states_old[0] = HAL_GPIO_ReadPin(SW_0_GPIO_Port, SW_0_Pin);
+  sw_states_old[1] = HAL_GPIO_ReadPin(SW_1_GPIO_Port, SW_1_Pin);
+  sw_states_old[2] = HAL_GPIO_ReadPin(SW_2_GPIO_Port, SW_2_Pin);
+  sw_states_old[3] = HAL_GPIO_ReadPin(SW_3_GPIO_Port, SW_3_Pin);
+  GPIO_PinState sw_states_new[4];
+  uint8_t uart_holdoff = 0;
+  
   // Setup and initialize Dotstars
   DotStar ring = DotStar(20, DOTSTAR_RBG);
   ring.begin(); // Initialize pins for output
@@ -124,6 +135,7 @@ int main(void)
   rgb_default.r = 20; rgb_default.g = 20; rgb_default.b = 244;
   ring.setBrightness(200);
   ring_set_all_pixels(ring, rgb_default);
+  uint8_t ring_dir = 0;
 
   // Initialize LED driver
   BarGraph bg=BarGraph(8,40);
@@ -141,6 +153,8 @@ int main(void)
   uint16_t b; 
   uint16_t c;
 
+  HAL_Delay(500);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -152,6 +166,34 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     
+    // Check Toggle Switches
+    sw_states_new[0] = HAL_GPIO_ReadPin(SW_0_GPIO_Port, SW_0_Pin);
+    sw_states_new[1] = HAL_GPIO_ReadPin(SW_1_GPIO_Port, SW_1_Pin);
+    sw_states_new[2] = HAL_GPIO_ReadPin(SW_2_GPIO_Port, SW_2_Pin);
+    sw_states_new[3] = HAL_GPIO_ReadPin(SW_3_GPIO_Port, SW_3_Pin);
+    HAL_GPIO_WritePin(LED_0_GPIO_Port, LED_0_Pin, sw_states_new[0]);
+    HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, sw_states_new[1]);
+    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, sw_states_new[2]);
+    if (uart_holdoff == 0) {
+      for (uint8_t sw_i = 0; sw_i < 4; sw_i++) {
+        if ((sw_states_new[sw_i] == GPIO_PIN_SET) && (sw_states_old[sw_i] == GPIO_PIN_RESET)) {
+          uint8_t uart_data = sw_i;
+          uart_holdoff = 4;
+          //HAL_UART_Transmit(&huart1, &sw_i, 1, HAL_MAX_DELAY);
+          if (sw_i == 3) {
+            ring_dir = !ring_dir;
+          }
+          break;
+        }
+      }
+    } else {
+      uart_holdoff--;
+    }
+    for (uint8_t sw_i = 0; sw_i < 4; sw_i++) {
+      sw_states_old[sw_i] = sw_states_new[sw_i];
+    } 
+
+
     // read bar graph switch inputs and update graph 
     bg_sw[0] = !HAL_GPIO_ReadPin(BG_SW_0_GPIO_Port, BG_SW_0_Pin);
     bg_sw[1] = !HAL_GPIO_ReadPin(BG_SW_1_GPIO_Port, BG_SW_1_Pin);
@@ -163,14 +205,9 @@ int main(void)
     bg_sw[7] = !HAL_GPIO_ReadPin(BG_SW_7_GPIO_Port, BG_SW_7_Pin);
     bg.update(&bg_sw[0]);
     
-    //wait for color data to be ready
-    //while(!apds.colorDataReady()){
-    //  HAL_Delay(5);
-    //}
-    //get the data and print the different channels
     
+    // Get color sensor data
     apds.getColorData(&r, &g, &b, &c);
-
     if ((r > g) && (r > b)) {
       rgb_new.r = 100;
       rgb_new.g = 0;
@@ -184,10 +221,17 @@ int main(void)
       rgb_new.g = 0;
       rgb_new.b = 100;
     }
-    
     ring_set_all_pixels(ring, rgb_new);
+    if (ring_dir == 0) {
+      ring.incrRing(rgb_new);
+    } else {
+      ring.decrRing(rgb_new);
+    }
 
     HAL_Delay(500);
+
+    uint8_t uart_data = 0x01;
+    HAL_UART_Transmit(&huart1, &uart_data, 1, HAL_MAX_DELAY);
     
   }
   /* USER CODE END 3 */

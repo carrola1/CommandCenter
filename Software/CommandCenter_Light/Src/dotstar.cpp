@@ -34,6 +34,7 @@ DotStar::DotStar(uint8_t n, uint8_t o) :
  bOffset((o >> 4) & 3)
 {
   updateLength(n);
+  ringIndex = 0;
 }
 
 DotStar::~DotStar(void) { // Destructor
@@ -112,6 +113,26 @@ void DotStar::show(void) {
     } while(--n);
   }
   for(i=0; i<((numLEDs + 15) / 16); i++) sw_spi_out(0xFF); // End-frame marker (see note above)
+}
+
+void DotStar::incrRing(RGB_VALS rgb) {
+  if (ringIndex == numLEDs-1) {
+    ringIndex = 0;
+  } else {
+    ringIndex++;
+  }
+  setPixelColor(ringIndex, rgb.r, rgb.g, rgb.b);
+  show();
+}
+
+void DotStar::decrRing(RGB_VALS rgb) {
+  if (ringIndex == 0) {
+    ringIndex = numLEDs-1;
+  } else {
+    ringIndex--;
+  }
+  setPixelColor(ringIndex, rgb.r, rgb.g, rgb.b);
+  show();
 }
 
 void DotStar::clear() { // Write 0s (off) to full pixel buffer

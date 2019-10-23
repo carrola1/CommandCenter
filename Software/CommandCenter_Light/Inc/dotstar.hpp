@@ -35,11 +35,18 @@
 #define DOTSTAR_BGR (2 | (1 << 2) | (0 << 4))
 #define DOTSTAR_MONO 0 // Single-color strip WIP DO NOT USE YET
 
+struct RGB_VALS
+  {
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+  };
+
 class DotStar {
 
  public:
 
-    DotStar(uint8_t n, uint8_t o=DOTSTAR_BRG);
+    DotStar(uint8_t n, uint8_t o=DOTSTAR_RBG);
    ~DotStar(void);
   void
     begin(void),                            // Prime pins/SPI for output
@@ -57,6 +64,8 @@ class DotStar {
   uint8_t
     getBrightness(void) const,              // Return global brightness
    *getPixels(void) const;                  // Return pixel data pointer
+  void incrRing(RGB_VALS rgb);
+  void decrRing(RGB_VALS rgb);
 
  private:
 
@@ -68,6 +77,7 @@ class DotStar {
     rOffset,                                // Index of red in 3-byte pixel
     gOffset,                                // Index of green byte
     bOffset;                                // Index of blue byte
+  uint8_t  ringIndex;
   void
     sw_spi_init(void),                      // Start bitbang SPI
     sw_spi_out(uint8_t n),                  // Bitbang SPI write

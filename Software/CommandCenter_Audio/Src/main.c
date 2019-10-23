@@ -54,6 +54,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+uint8_t uart_data;
+uint8_t uart_ready = 1;
 FATFS FatFs;
 /* USER CODE END PV */
 
@@ -118,6 +120,9 @@ int main(void)
   const char audio_file[32] = "red.wav";
   play_wav(audio_file);
 
+  // Test LED
+  HAL_GPIO_WritePin(TEST_LED_GPIO_Port, TEST_LED_Pin, GPIO_PIN_SET);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -142,7 +147,13 @@ int main(void)
       motor_state_last = 2;
     }
     
-    HAL_Delay(1000);
+    HAL_Delay(20);
+
+    if (uart_ready == 1) {
+      HAL_GPIO_TogglePin(TEST_LED_GPIO_Port, TEST_LED_Pin);
+      HAL_UART_Receive_IT(&huart1, &uart_data, 1);
+      uart_ready = 0;
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -214,7 +225,9 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+  uart_ready = 1;
+}
 /* USER CODE END 4 */
 
 /**
