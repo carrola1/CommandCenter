@@ -150,9 +150,9 @@ int main(void)
     HAL_Delay(20);
 
     if (uart_ready == 1) {
+      uart_ready = 0;
       HAL_GPIO_TogglePin(TEST_LED_GPIO_Port, TEST_LED_Pin);
       HAL_UART_Receive_IT(&huart1, &uart_data, 1);
-      uart_ready = 0;
     }
     /* USER CODE END WHILE */
 
