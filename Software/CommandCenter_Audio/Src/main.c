@@ -56,6 +56,8 @@
 /* USER CODE BEGIN PV */
 uint8_t uart_data;
 uint8_t uart_ready = 1;
+uint8_t audio_playing = 0;
+uint8_t audio_drop = 0;
 FATFS FatFs;
 /* USER CODE END PV */
 
@@ -117,11 +119,11 @@ int main(void)
   HAL_LPTIM_PWM_Start(&hlptim1, 0x1388, 0x00FA);
   
   // Play wave file
-  const char audio_file[32] = "red.wav";
-  play_wav(audio_file);
+  //const char audio_file[32] = "red.wav";
+  //play_wav(audio_file);
 
   // Test LED
-  HAL_GPIO_WritePin(TEST_LED_GPIO_Port, TEST_LED_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(TEST_LED_GPIO_Port, TEST_LED_Pin, GPIO_PIN_RESET);
 
   /* USER CODE END 2 */
 
@@ -129,6 +131,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    // Motor control
     uint8_t motor_state_0;
     uint8_t motor_state_1;
     uint8_t motor_state_2;
@@ -146,14 +149,25 @@ int main(void)
       __HAL_LPTIM_COMPARE_SET(&hlptim1, 0x00FA);
       motor_state_last = 2;
     }
-    
-    HAL_Delay(20);
+
 
     if (uart_ready == 1) {
       uart_ready = 0;
-      HAL_GPIO_TogglePin(TEST_LED_GPIO_Port, TEST_LED_Pin);
+      if (uart_data == 0) {
+        play_wav("blip.wav");
+      } else if (uart_data == 1) {
+        //play_wav("bloop.wav");
+        play_wav("red.wav");
+      } else if (uart_data == 2) {
+        play_wav("blurp.wav");
+      } else {
+        play_wav("boing.wav");
+      }
       HAL_UART_Receive_IT(&huart1, &uart_data, 1);
     }
+
+    HAL_Delay(10);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -227,6 +241,7 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
   uart_ready = 1;
+  audio_drop = audio_playing;
 }
 /* USER CODE END 4 */
 

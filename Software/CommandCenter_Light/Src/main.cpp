@@ -125,7 +125,7 @@ int main(void)
   uint8_t uart_holdoff = 0;
   
   // Setup and initialize Dotstars
-  DotStar ring = DotStar(20, DOTSTAR_RBG);
+  DotStar ring = DotStar(20, DOTSTAR_BGR);
   ring.begin(); // Initialize pins for output
   RGB_VALS rgb_off;
   rgb_off.r = 0; rgb_off.g = 0; rgb_off.b = 0;
@@ -134,7 +134,6 @@ int main(void)
   RGB_VALS rgb_new;
   rgb_default.r = 20; rgb_default.g = 20; rgb_default.b = 244;
   ring.setBrightness(200);
-  ring_set_all_pixels(ring, rgb_default);
   uint8_t ring_dir = 0;
 
   // Initialize LED driver
@@ -179,7 +178,7 @@ int main(void)
         if ((sw_states_new[sw_i] == GPIO_PIN_SET) && (sw_states_old[sw_i] == GPIO_PIN_RESET)) {
           uint8_t uart_data = sw_i;
           uart_holdoff = 4;
-          //HAL_UART_Transmit(&huart1, &sw_i, 1, HAL_MAX_DELAY);
+          HAL_UART_Transmit(&huart1, &sw_i, 1, HAL_MAX_DELAY);
           if (sw_i == 3) {
             ring_dir = !ring_dir;
           }
@@ -216,22 +215,24 @@ int main(void)
       rgb_new.r = 0;
       rgb_new.g = 100;
       rgb_new.b = 0;
-    } else {
+    } else if ((b > r) && (b > g)) {
       rgb_new.r = 0;
       rgb_new.g = 0;
       rgb_new.b = 100;
+    } else {
+      rgb_new.r = 0;
+      rgb_new.g = 0;
+      rgb_new.b = 0;
     }
-    ring_set_all_pixels(ring, rgb_new);
+
+    // Increment/decrement LED ring
     if (ring_dir == 0) {
       ring.incrRing(rgb_new);
     } else {
       ring.decrRing(rgb_new);
     }
 
-    HAL_Delay(500);
-
-    uint8_t uart_data = 0x01;
-    HAL_UART_Transmit(&huart1, &uart_data, 1, HAL_MAX_DELAY);
+    HAL_Delay(25);
     
   }
   /* USER CODE END 3 */

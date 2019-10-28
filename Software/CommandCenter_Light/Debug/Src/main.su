@@ -1,5 +1,5 @@
 APDS9960.h:175:3:APDS9960::APDS9960()	16	static
 main.cpp:87:5:int main()	192	static
-main.cpp:245:6:void SystemClock_Config()	120	static
-main.cpp:304:6:void Error_Handler()	8	static
-main.cpp:313:6:void _Error_Handler(char*, int)	16	static
+main.cpp:246:6:void SystemClock_Config()	120	static
+main.cpp:305:6:void Error_Handler()	8	static
+main.cpp:314:6:void _Error_Handler(char*, int)	16	static

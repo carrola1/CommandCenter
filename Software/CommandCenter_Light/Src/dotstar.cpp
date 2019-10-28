@@ -116,6 +116,7 @@ void DotStar::show(void) {
 }
 
 void DotStar::incrRing(RGB_VALS rgb) {
+  setPixelColor(ringIndex, 0, 0, 0);
   if (ringIndex == numLEDs-1) {
     ringIndex = 0;
   } else {
@@ -126,6 +127,7 @@ void DotStar::incrRing(RGB_VALS rgb) {
 }
 
 void DotStar::decrRing(RGB_VALS rgb) {
+  setPixelColor(ringIndex, 0, 0, 0);
   if (ringIndex == 0) {
     ringIndex = numLEDs-1;
   } else {
