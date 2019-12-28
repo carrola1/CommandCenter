@@ -165,8 +165,12 @@ int main(void)
   uint16_t c;
   //turn on white LED
   HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
+  
+  // Setup find color application
   uint16_t color_find_timer_max = 500;
-  uint16_t color_find_timer = color_find_timer_max;
+  uint16_t color_find_timer = color_find_timer_max/2;
+  bool color_found = true;
+  uint8_t color_to_find;
 
   HAL_Delay(500);
 
@@ -271,6 +275,16 @@ int main(void)
         rgb_new.g = 140;
         rgb_new.b = 0;
       }
+
+      if (color == color_to_find-5) {
+        uint8_t color_found_success = color_to_find + 7;
+        HAL_UART_Transmit(&huart1, &color_found_success, 1, HAL_MAX_DELAY);
+        color_found = true;
+      } else {
+        uint8_t color_found_fail = color_to_find + 14; 
+        HAL_UART_Transmit(&huart1, &color_found_fail, 1, HAL_MAX_DELAY);
+      }
+      color_find_timer = color_find_timer_max;
     }
 
     // Increment/decrement LED ring
@@ -282,8 +296,11 @@ int main(void)
 
     if (color_find_timer == 0) {
       if (uart_holdoff == 0) {
-        uint8_t color_find = (HAL_RNG_GetRandomNumber(&hrng) % 7) + 5;
-        HAL_UART_Transmit(&huart1, &color_find, 1, HAL_MAX_DELAY);
+        if (color_found) {
+          color_to_find = (HAL_RNG_GetRandomNumber(&hrng) % 7) + 5;
+          color_found = false;
+        }
+        HAL_UART_Transmit(&huart1, &color_to_find, 1, HAL_MAX_DELAY);
         uart_holdoff = uart_holdoff_max;
         color_find_timer = color_find_timer_max;
       }
