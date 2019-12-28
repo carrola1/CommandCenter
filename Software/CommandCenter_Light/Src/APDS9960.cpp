@@ -631,3 +631,28 @@ void APDS9960::write(uint8_t reg, uint8_t value, uint8_t num) {
   uint8_t writedata[2] = {reg, value};
   HAL_I2C_Master_Transmit(&hi2c1, APDS9960_ADDRESS, &writedata[0], num, HAL_MAX_DELAY);
 }
+
+color_t APDS9960::colorSort(uint16_t r, uint16_t g, uint16_t b) {
+  uint32_t total = r + g + b;
+  float rPer = 1.0*r/total*100.0;
+  float gPer = 1.0*g/total*100.0;
+  float bPer = 1.0*b/total*100.0;
+  if ((rPer > 36.0) & (gPer <= 30.0)) {
+    return RED;
+  } else if ((rPer > 36.0) & (gPer > 30.0)) {
+    return ORANGE;
+  } else if ((bPer > 40.0) & (rPer < 22.0)) {
+    return BLUE;
+  } else if ((gPer > 34.0) & (rPer > 32.0)) {
+    return YELLOW;
+  } else if (gPer > 36.0) {
+    return GREEN;
+  } else if ((rPer > 34.0) & (bPer > 35.0)){
+    return PINK;
+  } else if ((bPer > 36.0) & (rPer > 22.0)) {
+    return PURPLE;
+  } else {
+    return UNKNOWN;
+  }
+
+}

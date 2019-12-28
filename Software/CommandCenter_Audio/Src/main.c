@@ -131,6 +131,11 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    
+    GPIO_PinState wake_sw_state;
+    wake_sw_state = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
+    HAL_GPIO_WritePin(TEST_LED_GPIO_Port, TEST_LED_Pin, wake_sw_state);
+    
     // Motor control
     uint8_t motor_state_0;
     uint8_t motor_state_1;

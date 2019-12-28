@@ -1,6 +1,75 @@
 EESchema-LIBRARY Version 2.4
 #encoding utf-8
 #
+# APDS-9960-dk_Optical-Sensors-Ambient-Light-IR-UV-Sensors
+#
+DEF APDS-9960-dk_Optical-Sensors-Ambient-Light-IR-UV-Sensors U 0 20 Y Y 1 F N
+F0 "U" 100 350 60 H V C CNN
+F1 "APDS-9960-dk_Optical-Sensors-Ambient-Light-IR-UV-Sensors" 0 -350 60 H V L CNN
+F2 "digikey-footprints:Ambient_Prox_APDS-9960" 200 200 60 H I L CNN
+F3 "https://docs.broadcom.com/docs/AV02-4191EN" 200 300 60 H I L CNN
+F4 "516-3480-1-ND" 200 400 60 H I L CNN "Digi-Key_PN"
+F5 "APDS-9960" 200 500 60 H I L CNN "MPN"
+F6 "Sensors, Transducers" 200 600 60 H I L CNN "Category"
+F7 "Optical Sensors - Ambient Light, IR, UV Sensors" 200 700 60 H I L CNN "Family"
+F8 "https://docs.broadcom.com/docs/AV02-4191EN" 200 800 60 H I L CNN "DK_Datasheet_Link"
+F9 "/product-detail/en/broadcom-limited/APDS-9960/516-3480-1-ND/6677150" 200 900 60 H I L CNN "DK_Detail_Page"
+F10 "SENSOR OPT 560NM AMBIENT MODULE" 200 1000 60 H I L CNN "Description"
+F11 "Broadcom Limited" 200 1100 60 H I L CNN "Manufacturer"
+F12 "Active" 200 1200 60 H I L CNN "Status"
+DRAW
+S -200 300 200 -300 0 1 0 f
+X SDA 1 -300 100 100 R 50 50 1 1 B
+X INT 2 300 200 100 L 50 50 1 1 O
+X LDR 3 300 100 100 L 50 50 1 1 O
+X LEDK 4 300 0 100 L 50 50 1 1 P
+X LEDA 5 300 -100 100 L 50 50 1 1 P
+X GND 6 -100 -400 100 U 50 50 1 1 W
+X SCL 7 -300 0 100 R 50 50 1 1 I
+X VDD 8 -100 400 100 D 50 50 1 1 W
+ENDDRAW
+ENDDEF
+#
+# DMG1012T-7-dk_Transistors-FETs-MOSFETs-Single
+#
+DEF DMG1012T-7-dk_Transistors-FETs-MOSFETs-Single Q 0 0 Y Y 1 F N
+F0 "Q" -106 143 60 H V R CNN
+F1 "DMG1012T-7-dk_Transistors-FETs-MOSFETs-Single" 136 0 60 V V C CNN
+F2 "digikey-footprints:SOT-523" 200 200 60 H I L CNN
+F3 "https://www.diodes.com/assets/Datasheets/ds31783.pdf" 200 300 60 H I L CNN
+F4 "DMG1012T-7DICT-ND" 200 400 60 H I L CNN "Digi-Key_PN"
+F5 "DMG1012T-7" 200 500 60 H I L CNN "MPN"
+F6 "Discrete Semiconductor Products" 200 600 60 H I L CNN "Category"
+F7 "Transistors - FETs, MOSFETs - Single" 200 700 60 H I L CNN "Family"
+F8 "https://www.diodes.com/assets/Datasheets/ds31783.pdf" 200 800 60 H I L CNN "DK_Datasheet_Link"
+F9 "/product-detail/en/diodes-incorporated/DMG1012T-7/DMG1012T-7DICT-ND/2181232" 200 900 60 H I L CNN "DK_Detail_Page"
+F10 "MOSFET N-CH 20V 630MA SOT-523" 200 1000 60 H I L CNN "Description"
+F11 "Diodes Incorporated" 200 1100 60 H I L CNN "Manufacturer"
+F12 "Active" 200 1200 60 H I L CNN "Status"
+DRAW
+C -50 0 130 0 1 0 f
+C 0 -75 5 0 1 0 N
+C 0 -55 5 0 1 0 N
+C 0 75 5 0 1 0 N
+P 2 0 1 0 0 -55 -100 -55 N
+P 3 0 1 0 -200 -100 -120 -100 -120 55 N
+P 3 0 1 0 0 -100 0 0 -100 0 N
+P 3 0 1 0 0 100 0 55 -100 55 N
+P 5 0 1 0 -5 -75 40 -75 40 55 40 75 -5 75 N
+P 2 1 1 0 -100 -55 -100 -75 N
+P 2 1 1 0 -100 -55 -100 -35 N
+P 2 1 1 0 -100 0 -100 -20 N
+P 2 1 1 0 -100 0 -100 20 N
+P 2 1 1 0 -100 75 -100 35 N
+P 2 1 1 0 60 20 20 20 N
+P 4 1 1 0 -100 0 -70 20 -70 -20 -100 0 F
+P 4 1 1 0 40 20 20 -10 60 -10 40 20 F
+X G 1 -300 -100 100 R 50 50 1 1 B
+X S 2 0 -200 100 U 50 50 1 1 B
+X D 3 0 200 100 D 50 50 1 1 B
+ENDDRAW
+ENDDEF
+#
 # Mounting_Hole-NFC_Toy-rescue
 #
 DEF Mounting_Hole-NFC_Toy-rescue MK 0 40 Y Y 1 F N

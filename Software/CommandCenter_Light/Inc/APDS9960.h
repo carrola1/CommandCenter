@@ -161,6 +161,18 @@ enum {
   APDS9960_GPULSE_32US = 0x03, // Pulse 32us
 };
 
+// Color detect
+typedef enum {
+  RED     = 0x00,
+  GREEN   = 0x01,
+  BLUE    = 0x02,
+  YELLOW  = 0x03,
+  PURPLE  = 0x04,
+  PINK    = 0x05,
+  ORANGE  = 0x06,
+  UNKNOWN = 0xFF,
+} color_t;
+
 #define APDS9960_UP 0x01    /**< Gesture Up */
 #define APDS9960_DOWN 0x02  /**< Gesture Down */
 #define APDS9960_LEFT 0x03  /**< Gesture Left */
@@ -175,7 +187,7 @@ public:
   APDS9960(){};
   ~APDS9960(){};
 
-  bool begin(uint16_t iTimeMS = 200, apds9960AGain_t = APDS9960_AGAIN_64X,
+  bool begin(uint16_t iTimeMS = 200, apds9960AGain_t = APDS9960_AGAIN_16X,
                 uint8_t addr = APDS9960_ADDRESS);
   void setADCIntegrationTime(uint16_t iTimeMS);
   float getADCIntegrationTime();
@@ -216,6 +228,7 @@ public:
   void disableColorInterrupt();
   void clearInterrupt();
   void setIntLimits(uint16_t l, uint16_t h);
+  color_t colorSort(uint16_t r, uint16_t g, uint16_t b);
 
   // turn on/off elements
   void enable(bool en = true);

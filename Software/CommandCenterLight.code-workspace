@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "CommandCenter_Light/Src"
+		},
+		{
+			"path": "CommandCenter_Light/Drivers"
+		},
+		{
+			"path": "CommandCenter_Light/Inc"
+		}
+	],
+	"settings": {}
+}

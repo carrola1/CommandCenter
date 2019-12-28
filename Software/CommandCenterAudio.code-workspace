@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "CommandCenter_Audio/Src"
+		},
+		{
+			"path": "CommandCenter_Audio/Drivers"
+		},
+		{
+			"path": "CommandCenter_Audio/Inc"
+		},
+		{
+			"path": "CommandCenter_Audio/Middlewares"
+		}
+	],
+	"settings": {}
+}

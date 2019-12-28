@@ -38,8 +38,8 @@ CommandCenter_Audio.list \
 all: CommandCenter_Audio.elf secondary-outputs
 
 # Tool invocations
-CommandCenter_Audio.elf: $(OBJS) $(USER_OBJS) C:\GitHub\CommandCenter\Software\CommandCenter_Audio\STM32L052C8TX_FLASH.ld
-	arm-none-eabi-gcc -o "CommandCenter_Audio.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"C:\GitHub\CommandCenter\Software\CommandCenter_Audio\STM32L052C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="CommandCenter_Audio.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+CommandCenter_Audio.elf: $(OBJS) $(USER_OBJS) /home/andrew/Documents/GitHub/CommandCenter/Software/CommandCenter_Audio/STM32L052C8TX_FLASH.ld
+	arm-none-eabi-gcc -o "CommandCenter_Audio.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"/home/andrew/Documents/GitHub/CommandCenter/Software/CommandCenter_Audio/STM32L052C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="CommandCenter_Audio.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

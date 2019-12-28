@@ -30,3 +30,5 @@ The TPS61030 datasheet suggests a larger input capacitance (47uF) if input suppl
 Improve layout of TPS61030.
 
 Consider replacing TPS61030 with integrated solution (LTM4661).
+
+Improve layout of audio amps

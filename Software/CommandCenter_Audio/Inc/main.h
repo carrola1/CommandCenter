@@ -68,6 +68,8 @@ void Error_Handler(void);
 #define SD_CS_GPIO_Port GPIOA
 #define SD_SW_Pin GPIO_PIN_3
 #define SD_SW_GPIO_Port GPIOA
+#define WKUP_Pin GPIO_PIN_0
+#define WKUP_GPIO_Port GPIOA
 #define MOTOR_SW_0_Pin GPIO_PIN_0
 #define MOTOR_SW_0_GPIO_Port GPIOB
 #define MOTOR_SW_1_Pin GPIO_PIN_1

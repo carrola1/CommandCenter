@@ -122,7 +122,7 @@ int main(void)
   sw_states_old[2] = HAL_GPIO_ReadPin(SW_2_GPIO_Port, SW_2_Pin);
   sw_states_old[3] = HAL_GPIO_ReadPin(SW_3_GPIO_Port, SW_3_Pin);
   GPIO_PinState sw_states_new[4];
-  uint8_t uart_holdoff = 0;
+  uint8_t uart_holdoff = 4;
   
   // Setup and initialize Dotstars
   DotStar ring = DotStar(20, DOTSTAR_BGR);
@@ -132,14 +132,23 @@ int main(void)
   ring_set_all_pixels(ring, rgb_off); // Initialize LEDs to off
   RGB_VALS rgb_default; 
   RGB_VALS rgb_new;
-  rgb_default.r = 20; rgb_default.g = 20; rgb_default.b = 244;
+  rgb_default.r = 20; rgb_default.g = 10; rgb_default.b = 180;
   ring.setBrightness(200);
   uint8_t ring_dir = 0;
 
   // Initialize LED driver
   BarGraph bg=BarGraph(8,40);
   bg.begin();
-  uint8_t bg_sw[8];
+  uint8_t bg_sw_old[8];
+  uint8_t bg_sw_new[8];
+  bg_sw_old[0] = !HAL_GPIO_ReadPin(BG_SW_0_GPIO_Port, BG_SW_0_Pin);
+  bg_sw_old[1] = !HAL_GPIO_ReadPin(BG_SW_1_GPIO_Port, BG_SW_1_Pin);
+  bg_sw_old[2] = !HAL_GPIO_ReadPin(BG_SW_2_GPIO_Port, BG_SW_2_Pin);
+  bg_sw_old[3] = !HAL_GPIO_ReadPin(BG_SW_3_GPIO_Port, BG_SW_3_Pin);
+  bg_sw_old[4] = !HAL_GPIO_ReadPin(BG_SW_4_GPIO_Port, BG_SW_4_Pin);
+  bg_sw_old[5] = !HAL_GPIO_ReadPin(BG_SW_5_GPIO_Port, BG_SW_5_Pin);
+  bg_sw_old[6] = !HAL_GPIO_ReadPin(BG_SW_6_GPIO_Port, BG_SW_6_Pin);
+  bg_sw_old[7] = !HAL_GPIO_ReadPin(BG_SW_7_GPIO_Port, BG_SW_7_Pin);
 
   // Setup Color Sensor
   APDS9960 apds;
@@ -151,6 +160,8 @@ int main(void)
   uint16_t g; 
   uint16_t b; 
   uint16_t c;
+  //turn on white LED
+  HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
 
   HAL_Delay(500);
 
@@ -194,35 +205,67 @@ int main(void)
 
 
     // read bar graph switch inputs and update graph 
-    bg_sw[0] = !HAL_GPIO_ReadPin(BG_SW_0_GPIO_Port, BG_SW_0_Pin);
-    bg_sw[1] = !HAL_GPIO_ReadPin(BG_SW_1_GPIO_Port, BG_SW_1_Pin);
-    bg_sw[2] = !HAL_GPIO_ReadPin(BG_SW_2_GPIO_Port, BG_SW_2_Pin);
-    bg_sw[3] = !HAL_GPIO_ReadPin(BG_SW_3_GPIO_Port, BG_SW_3_Pin);
-    bg_sw[4] = !HAL_GPIO_ReadPin(BG_SW_4_GPIO_Port, BG_SW_4_Pin);
-    bg_sw[5] = !HAL_GPIO_ReadPin(BG_SW_5_GPIO_Port, BG_SW_5_Pin);
-    bg_sw[6] = !HAL_GPIO_ReadPin(BG_SW_6_GPIO_Port, BG_SW_6_Pin);
-    bg_sw[7] = !HAL_GPIO_ReadPin(BG_SW_7_GPIO_Port, BG_SW_7_Pin);
-    bg.update(&bg_sw[0]);
+    bg_sw_new[0] = !HAL_GPIO_ReadPin(BG_SW_0_GPIO_Port, BG_SW_0_Pin);
+    bg_sw_new[1] = !HAL_GPIO_ReadPin(BG_SW_1_GPIO_Port, BG_SW_1_Pin);
+    bg_sw_new[2] = !HAL_GPIO_ReadPin(BG_SW_2_GPIO_Port, BG_SW_2_Pin);
+    bg_sw_new[3] = !HAL_GPIO_ReadPin(BG_SW_3_GPIO_Port, BG_SW_3_Pin);
+    bg_sw_new[4] = !HAL_GPIO_ReadPin(BG_SW_4_GPIO_Port, BG_SW_4_Pin);
+    bg_sw_new[5] = !HAL_GPIO_ReadPin(BG_SW_5_GPIO_Port, BG_SW_5_Pin);
+    bg_sw_new[6] = !HAL_GPIO_ReadPin(BG_SW_6_GPIO_Port, BG_SW_6_Pin);
+    bg_sw_new[7] = !HAL_GPIO_ReadPin(BG_SW_7_GPIO_Port, BG_SW_7_Pin);
+    bg.update(&bg_sw_new[0]);
+    for (uint8_t i = 0; i < 8; i++) {
+      if (bg_sw_new[i] != bg_sw_old[i]) {
+        if (uart_holdoff == 0) {
+          uint8_t send_data = 4;
+          HAL_UART_Transmit(&huart1, &send_data, 1, HAL_MAX_DELAY);
+          uart_holdoff = 4;
+        }
+        break;
+      } 
+    }
+    for (uint8_t i = 0; i < 8; i++) {
+      bg_sw_old[i] = bg_sw_new[i];
+    }
     
     
     // Get color sensor data
     apds.getColorData(&r, &g, &b, &c);
-    if ((r > g) && (r > b)) {
-      rgb_new.r = 100;
-      rgb_new.g = 0;
-      rgb_new.b = 0;
-    } else if ((g > r) && (g > b)) {
-      rgb_new.r = 0;
-      rgb_new.g = 100;
-      rgb_new.b = 0;
-    } else if ((b > r) && (b > g)) {
-      rgb_new.r = 0;
-      rgb_new.g = 0;
-      rgb_new.b = 100;
-    } else {
-      rgb_new.r = 0;
-      rgb_new.g = 0;
-      rgb_new.b = 0;
+    uint32_t color_total = r + g + b + c;
+    if (color_total > 39000) {
+      g = g - 3500; //Adjust for offset from blue PCB 
+      b = b - 9500; //Adjust for offset from blue PCB
+      color_t color;
+      color = apds.colorSort(r, g, b);
+      if (color == RED) {
+        rgb_new.r = 180;
+        rgb_new.g = 0;
+        rgb_new.b = 0;
+      } else if (color == ORANGE) {
+        rgb_new.r = 180;
+        rgb_new.g = 100;
+        rgb_new.b = 0;
+      } else if (color == BLUE) {
+        rgb_new.r = 0;
+        rgb_new.g = 0;
+        rgb_new.b = 180;
+      } else if (color == GREEN) {
+        rgb_new.r = 0;
+        rgb_new.g = 180;
+        rgb_new.b = 0;
+      } else if (color == PINK) {
+        rgb_new.r = 180;
+        rgb_new.g = 10;
+        rgb_new.b = 80;
+      } else if (color == PURPLE) {
+        rgb_new.r = 120;
+        rgb_new.g = 10;
+        rgb_new.b = 180;
+      } else if (color == YELLOW) {
+        rgb_new.r = 180;
+        rgb_new.g = 140;
+        rgb_new.b = 0;
+      }
     }
 
     // Increment/decrement LED ring
@@ -232,7 +275,7 @@ int main(void)
       ring.decrRing(rgb_new);
     }
 
-    HAL_Delay(25);
+    HAL_Delay(15);
     
   }
   /* USER CODE END 3 */

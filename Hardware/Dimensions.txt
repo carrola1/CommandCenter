@@ -1,0 +1,17 @@
+Toggle Switches
+    - Thread diameter: 0.45"
+    - Thread height: 0.46"
+    - Base height: 0.9"
+    - Base width: 1.1"
+
+Rotary (8 position)
+    - Thread diameter: 0.37"
+    - Thread height: 0.37"
+    - Base height: 0.77" (including pins)
+    - Base diameter: 1.0"
+    - Knob diameter: 0.89"
+
+Key Switch
+    - Thread diameter: 0.46"
+    - Thread height: 0.40"
+    - Head diameter: 0.59"

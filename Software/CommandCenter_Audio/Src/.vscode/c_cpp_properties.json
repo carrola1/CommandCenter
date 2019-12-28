@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/home/andrew/Documents/GitHub/CommandCenter/Software/CommandCenter_Audio/Inc/**",
+                "/home/andrew/Documents/GitHub/CommandCenter/Software/CommandCenter_Audio/Drivers/**",
+                "/home/andrew/Documents/GitHub/CommandCenter/Software/CommandCenter_Audio/Middlewares/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}
