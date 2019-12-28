@@ -52,6 +52,7 @@
 #include "i2c.h"
 #include "spi.h"
 #include "gpio.h"
+#include "rng.h"
 #include "dotstar.hpp"
 #include "ring_effects.hpp"
 #include "bar_graph.hpp"
@@ -110,6 +111,7 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_SPI1_Init();
+  MX_RNG_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
@@ -122,7 +124,8 @@ int main(void)
   sw_states_old[2] = HAL_GPIO_ReadPin(SW_2_GPIO_Port, SW_2_Pin);
   sw_states_old[3] = HAL_GPIO_ReadPin(SW_3_GPIO_Port, SW_3_Pin);
   GPIO_PinState sw_states_new[4];
-  uint8_t uart_holdoff = 4;
+  uint8_t uart_holdoff_max = 4;
+  uint8_t uart_holdoff = uart_holdoff_max;
   
   // Setup and initialize Dotstars
   DotStar ring = DotStar(20, DOTSTAR_BGR);
@@ -162,6 +165,8 @@ int main(void)
   uint16_t c;
   //turn on white LED
   HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
+  uint16_t color_find_timer_max = 500;
+  uint16_t color_find_timer = color_find_timer_max;
 
   HAL_Delay(500);
 
@@ -175,7 +180,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    
+
     // Check Toggle Switches
     sw_states_new[0] = HAL_GPIO_ReadPin(SW_0_GPIO_Port, SW_0_Pin);
     sw_states_new[1] = HAL_GPIO_ReadPin(SW_1_GPIO_Port, SW_1_Pin);
@@ -188,7 +193,7 @@ int main(void)
       for (uint8_t sw_i = 0; sw_i < 4; sw_i++) {
         if ((sw_states_new[sw_i] == GPIO_PIN_SET) && (sw_states_old[sw_i] == GPIO_PIN_RESET)) {
           uint8_t uart_data = sw_i;
-          uart_holdoff = 4;
+          uart_holdoff = uart_holdoff_max;
           HAL_UART_Transmit(&huart1, &sw_i, 1, HAL_MAX_DELAY);
           if (sw_i == 3) {
             ring_dir = !ring_dir;
@@ -219,7 +224,7 @@ int main(void)
         if (uart_holdoff == 0) {
           uint8_t send_data = 4;
           HAL_UART_Transmit(&huart1, &send_data, 1, HAL_MAX_DELAY);
-          uart_holdoff = 4;
+          uart_holdoff = uart_holdoff_max;
         }
         break;
       } 
@@ -273,6 +278,17 @@ int main(void)
       ring.incrRing(rgb_new);
     } else {
       ring.decrRing(rgb_new);
+    }
+
+    if (color_find_timer == 0) {
+      if (uart_holdoff == 0) {
+        uint8_t color_find = (HAL_RNG_GetRandomNumber(&hrng) % 7) + 5;
+        HAL_UART_Transmit(&huart1, &color_find, 1, HAL_MAX_DELAY);
+        uart_holdoff = uart_holdoff_max;
+        color_find_timer = color_find_timer_max;
+      }
+    } else {
+      color_find_timer--;
     }
 
     HAL_Delay(15);

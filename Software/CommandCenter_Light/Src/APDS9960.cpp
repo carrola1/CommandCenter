@@ -119,6 +119,10 @@ bool APDS9960::begin(uint16_t iTimeMS, apds9960AGain_t aGain,
   _gpulse.GPULSE = 9; // 10 pulses
   this->write8(APDS9960_GPULSE, _gpulse.get());
 
+  for (uint8_t i=0; i<len_color_filt; i++) {
+    color_filt[i] = UNKNOWN;
+  }
+
   return true;
 }
 
@@ -637,22 +641,41 @@ color_t APDS9960::colorSort(uint16_t r, uint16_t g, uint16_t b) {
   float rPer = 1.0*r/total*100.0;
   float gPer = 1.0*g/total*100.0;
   float bPer = 1.0*b/total*100.0;
+  color_t color;
   if ((rPer > 36.0) & (gPer <= 30.0)) {
-    return RED;
+    color = RED;
   } else if ((rPer > 36.0) & (gPer > 30.0)) {
-    return ORANGE;
+    color = ORANGE;
   } else if ((bPer > 40.0) & (rPer < 22.0)) {
-    return BLUE;
+    color = BLUE;
   } else if ((gPer > 34.0) & (rPer > 32.0)) {
-    return YELLOW;
+    color = YELLOW;
   } else if (gPer > 36.0) {
-    return GREEN;
+    color = GREEN;
   } else if ((rPer > 34.0) & (bPer > 35.0)){
-    return PINK;
+    color = PINK;
   } else if ((bPer > 36.0) & (rPer > 22.0)) {
-    return PURPLE;
+    color = PURPLE;
+  } else {
+    color = UNKNOWN;
+  }
+
+  // shift new value into color filter
+  for (uint8_t i = 1; i < len_color_filt; i++) {
+    color_filt[i-1] = color_filt[i];
+  }
+  color_filt[len_color_filt-1] = color;
+
+  // check if all values in filter match
+  uint8_t match = 0;
+  for (uint8_t i = 1; i < len_color_filt; i++) {
+    if (color_filt[i-1] == color_filt[i]) {
+      match = match + 1;
+    }
+  }
+  if (match == len_color_filt-1) {
+    return color;
   } else {
     return UNKNOWN;
   }
-
 }

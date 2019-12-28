@@ -170,8 +170,11 @@ typedef enum {
   PURPLE  = 0x04,
   PINK    = 0x05,
   ORANGE  = 0x06,
-  UNKNOWN = 0xFF,
+  UNKNOWN = 0xFF
 } color_t;
+
+// Color filter
+#define len_color_filt 3
 
 #define APDS9960_UP 0x01    /**< Gesture Up */
 #define APDS9960_DOWN 0x02  /**< Gesture Down */
@@ -540,6 +543,9 @@ private:
     }
   };
   gstatus _gstatus;
+
+  color_t color_filt[len_color_filt];
+
 };
 
 #endif
