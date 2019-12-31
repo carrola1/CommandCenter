@@ -116,11 +116,26 @@ int main(void)
   fr = f_mount(&FatFs, "", 1);
   
   // Setup Motor PWM
-  HAL_LPTIM_PWM_Start(&hlptim1, 0x1388, 0x00FA);
+  uint8_t motor_state_0;
+  uint8_t motor_state_1;
+  uint8_t motor_state_2;
+  uint8_t motor_state_last;
+  motor_state_0 = HAL_GPIO_ReadPin(MOTOR_SW_0_GPIO_Port, MOTOR_SW_0_Pin);
+  motor_state_1 = HAL_GPIO_ReadPin(MOTOR_SW_1_GPIO_Port, MOTOR_SW_1_Pin);
+  motor_state_2 = HAL_GPIO_ReadPin(MOTOR_SW_2_GPIO_Port, MOTOR_SW_2_Pin);
+  if (motor_state_0 == 0) {
+    motor_state_last = 0;
+    HAL_LPTIM_PWM_Start(&hlptim1, 0x1388, 0x0258);
+  } else if (motor_state_1 == 0) {
+    motor_state_last = 1;
+    HAL_LPTIM_PWM_Start(&hlptim1, 0x1388, 0x0190);
+  } else {
+    motor_state_last = 2;
+    HAL_LPTIM_PWM_Start(&hlptim1, 0x1388, 0x00AF);
+  }
   
-  // Play wave file
-  //const char audio_file[32] = "red.wav";
-  //play_wav(audio_file);
+  // Wake switch
+  GPIO_PinState wake_sw_state;
 
   // Test LED
   HAL_GPIO_WritePin(TEST_LED_GPIO_Port, TEST_LED_Pin, GPIO_PIN_RESET);
@@ -132,43 +147,99 @@ int main(void)
   while (1)
   {
     
-    GPIO_PinState wake_sw_state;
     wake_sw_state = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
     HAL_GPIO_WritePin(TEST_LED_GPIO_Port, TEST_LED_Pin, wake_sw_state);
+    while (wake_sw_state == GPIO_PIN_SET) {
+      // do nothing
+      wake_sw_state = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
+    }
     
     // Motor control
-    uint8_t motor_state_0;
-    uint8_t motor_state_1;
-    uint8_t motor_state_2;
-    uint8_t motor_state_last = 3;
     motor_state_0 = HAL_GPIO_ReadPin(MOTOR_SW_0_GPIO_Port, MOTOR_SW_0_Pin);
     motor_state_1 = HAL_GPIO_ReadPin(MOTOR_SW_1_GPIO_Port, MOTOR_SW_1_Pin);
     motor_state_2 = HAL_GPIO_ReadPin(MOTOR_SW_2_GPIO_Port, MOTOR_SW_2_Pin);
     if ((motor_state_0 == 0) & (motor_state_last != 0)) {
-      __HAL_LPTIM_COMPARE_SET(&hlptim1, 0x01F4);
+      __HAL_LPTIM_COMPARE_SET(&hlptim1, 0x0258);
+      HAL_Delay(100);
+      play_wav("pete_the_cat.wav");
+      HAL_UART_Receive_IT(&huart1, &uart_data, 1);	// clear pending interrupt
+      uart_ready = 0;
       motor_state_last = 0;
     } else if ((motor_state_1 == 0) & (motor_state_last != 1)) {
-      __HAL_LPTIM_COMPARE_SET(&hlptim1, 0x0177);
+      __HAL_LPTIM_COMPARE_SET(&hlptim1, 0x0190);
+      HAL_Delay(100);
+      play_wav("blues_clues.wav");
+      HAL_UART_Receive_IT(&huart1, &uart_data, 1);	// clear pending interrupt
+      uart_ready = 0;
       motor_state_last = 1;
     } else if ((motor_state_2 == 0) & (motor_state_last != 2)) {
-      __HAL_LPTIM_COMPARE_SET(&hlptim1, 0x00FA);
+      __HAL_LPTIM_COMPARE_SET(&hlptim1, 0x00AF);
+      HAL_Delay(100);
+      play_wav("elmo.wav");
+      HAL_UART_Receive_IT(&huart1, &uart_data, 1);	// clear pending interrupt
+      uart_ready = 0;
       motor_state_last = 2;
     }
 
-
+    HAL_UART_Receive_IT(&huart1, &uart_data, 1);
     if (uart_ready == 1) {
-      uart_ready = 0;
       if (uart_data == 0) {
         play_wav("blip.wav");
       } else if (uart_data == 1) {
-        //play_wav("bloop.wav");
-        play_wav("red.wav");
+        play_wav("bloop.wav");
       } else if (uart_data == 2) {
         play_wav("blurp.wav");
-      } else {
+      } else if (uart_data == 3){
         play_wav("boing.wav");
+      } else if (uart_data == 4){
+        play_wav("ratchet.wav");
+      } else if (uart_data == 5) {
+    	  play_wav("find_red.wav");
+      } else if (uart_data == 6) {
+      	play_wav("find_green.wav");
+      } else if (uart_data == 7) {
+      	play_wav("find_blue.wav");
+      } else if (uart_data == 8) {
+      	play_wav("find_yellow.wav");
+      } else if (uart_data == 9) {
+      	play_wav("find_purple.wav");
+      } else if (uart_data == 10) {
+      	play_wav("find_pink.wav");
+      } else if (uart_data == 11) {
+      	play_wav("find_orange.wav");
+      } else if (uart_data == 12) {
+        play_wav("awesome.wav");
+        HAL_Delay(100);
+		    play_wav("red.wav");
+      } else if (uart_data == 13) {
+        play_wav("awesome.wav");
+        HAL_Delay(100);
+        play_wav("green.wav");
+      } else if (uart_data == 14) {
+        play_wav("awesome.wav");
+        HAL_Delay(100);
+        play_wav("blue.wav");
+      } else if (uart_data == 15) {
+        play_wav("you_did_it.wav");
+        HAL_Delay(100);
+        play_wav("yellow.wav");
+      } else if (uart_data == 16) {
+        play_wav("good_job.wav");
+        HAL_Delay(100);
+        play_wav("purple.wav");
+      } else if (uart_data == 17) {
+        play_wav("good_job.wav");
+        HAL_Delay(100);
+        play_wav("pink.wav");
+      } else if (uart_data == 18) {
+        play_wav("you_did_it.wav");
+        HAL_Delay(100);
+        play_wav("orange.wav");
+      } else {
+    	  play_wav("try_again.wav");
       }
-      HAL_UART_Receive_IT(&huart1, &uart_data, 1);
+      HAL_UART_Receive_IT(&huart1, &uart_data, 1);	// clear pending interrupt
+      uart_ready = 0;
     }
 
     HAL_Delay(10);

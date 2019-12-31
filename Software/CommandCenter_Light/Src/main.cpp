@@ -156,21 +156,24 @@ int main(void)
   // Setup Color Sensor
   APDS9960 apds;
   apds.begin();
-  //enable color sensign mode
+  //enable color sensing mode
   apds.enableColor(true);
   //create some variables to store the color data in
   uint16_t r; 
   uint16_t g; 
   uint16_t b; 
   uint16_t c;
-  //turn on white LED
-  HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
   
   // Setup find color application
-  uint16_t color_find_timer_max = 500;
+  uint16_t color_find_timer_max = 200;
   uint16_t color_find_timer = color_find_timer_max/2;
   bool color_found = true;
   uint8_t color_to_find;
+
+  // Wake switch
+  GPIO_PinState wake_sw_state_old;
+  GPIO_PinState wake_sw_state_new;
+  wake_sw_state_old = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
 
   HAL_Delay(500);
 
@@ -184,6 +187,23 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+    wake_sw_state_new = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
+    if ((wake_sw_state_new == GPIO_PIN_SET) & (wake_sw_state_old == GPIO_PIN_RESET)) {
+      ring_set_all_pixels(ring, rgb_off);
+      HAL_GPIO_WritePin(LED_0_GPIO_Port, LED_0_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_RESET);
+      bg.clear_display();
+      HAL_Delay(200);
+    }
+    while (wake_sw_state_new == GPIO_PIN_SET) {
+      // do nothing
+      wake_sw_state_new = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
+    }
+    wake_sw_state_old = wake_sw_state_new;
+    HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
 
     // Check Toggle Switches
     sw_states_new[0] = HAL_GPIO_ReadPin(SW_0_GPIO_Port, SW_0_Pin);
@@ -241,7 +261,7 @@ int main(void)
     // Get color sensor data
     apds.getColorData(&r, &g, &b, &c);
     uint32_t color_total = r + g + b + c;
-    if (color_total > 39000) {
+    if (color_total > 70000) {
       g = g - 3500; //Adjust for offset from blue PCB 
       b = b - 9500; //Adjust for offset from blue PCB
       color_t color;
@@ -276,15 +296,17 @@ int main(void)
         rgb_new.b = 0;
       }
 
-      if (color == color_to_find-5) {
-        uint8_t color_found_success = color_to_find + 7;
-        HAL_UART_Transmit(&huart1, &color_found_success, 1, HAL_MAX_DELAY);
-        color_found = true;
-      } else {
-        uint8_t color_found_fail = color_to_find + 14; 
-        HAL_UART_Transmit(&huart1, &color_found_fail, 1, HAL_MAX_DELAY);
+      if (color != UNKNOWN) {
+        if (color == color_to_find-5) {
+          uint8_t color_found_success = color_to_find + 7;
+          HAL_UART_Transmit(&huart1, &color_found_success, 1, HAL_MAX_DELAY);
+          color_found = true;
+        } else {
+          uint8_t color_found_fail = color_to_find + 14;
+          HAL_UART_Transmit(&huart1, &color_found_fail, 1, HAL_MAX_DELAY);
+        }
+        color_find_timer = color_find_timer_max;
       }
-      color_find_timer = color_find_timer_max;
     }
 
     // Increment/decrement LED ring
@@ -302,8 +324,8 @@ int main(void)
         }
         HAL_UART_Transmit(&huart1, &color_to_find, 1, HAL_MAX_DELAY);
         uart_holdoff = uart_holdoff_max;
-        color_find_timer = color_find_timer_max;
       }
+      color_find_timer = color_find_timer_max;
     } else {
       color_find_timer--;
     }

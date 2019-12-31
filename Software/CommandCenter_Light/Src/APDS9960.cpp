@@ -642,20 +642,20 @@ color_t APDS9960::colorSort(uint16_t r, uint16_t g, uint16_t b) {
   float gPer = 1.0*g/total*100.0;
   float bPer = 1.0*b/total*100.0;
   color_t color;
-  if ((rPer > 36.0) & (gPer <= 30.0)) {
+  if ((rPer > 35.0) & (gPer <= 28.0)) {
     color = RED;
-  } else if ((rPer > 36.0) & (gPer > 30.0)) {
+  } else if ((rPer > 36.0) & (gPer > 29.0)) {
     color = ORANGE;
-  } else if ((bPer > 40.0) & (rPer < 22.0)) {
+  } else if ((bPer > 49.0) & (rPer < 20.0)) {
     color = BLUE;
-  } else if ((gPer > 34.0) & (rPer > 32.0)) {
-    color = YELLOW;
-  } else if (gPer > 36.0) {
+  } else if (gPer > 38.0) {
     color = GREEN;
-  } else if ((rPer > 34.0) & (bPer > 35.0)){
+  } else if ((gPer > 34.0) & (rPer > 26.0)) {
+    color = YELLOW;
+  } else if ((bPer > 48.0) & (rPer > 21.0)) {
+      color = PURPLE;
+  } else if ((rPer > 28.0) & (bPer > 39.0)){
     color = PINK;
-  } else if ((bPer > 36.0) & (rPer > 22.0)) {
-    color = PURPLE;
   } else {
     color = UNKNOWN;
   }
@@ -674,7 +674,10 @@ color_t APDS9960::colorSort(uint16_t r, uint16_t g, uint16_t b) {
     }
   }
   if (match == len_color_filt-1) {
-    return color;
+    for (uint8_t i = 0; i < len_color_filt; i++) {
+	  color_filt[i] = UNKNOWN;
+	}
+	return color;
   } else {
     return UNKNOWN;
   }

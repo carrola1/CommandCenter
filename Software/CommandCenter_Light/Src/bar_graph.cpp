@@ -44,3 +44,8 @@ void BarGraph::update(uint8_t *sw_state) {
     }
   }
 }
+
+void BarGraph::clear_display() {
+  lc.clearDisplay(0);
+  last_switch = 8;
+}

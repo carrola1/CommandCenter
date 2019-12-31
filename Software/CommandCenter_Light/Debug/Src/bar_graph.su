@@ -1,4 +1,5 @@
 bar_graph.cpp:7:1:BarGraph::BarGraph(uint8_t, uint8_t)	16	static
 bar_graph.cpp:13:6:void BarGraph::begin()	40	static
 bar_graph.cpp:30:6:void BarGraph::update(uint8_t*)	48	static
+bar_graph.cpp:48:6:void BarGraph::clear_display()	16	static
 cmath:272:5:constexpr typename __gnu_cxx::__enable_if<std::__is_integer<_Tp>::__value, double>::__type std::floor(_Tp) [with _Tp = int]	24	static

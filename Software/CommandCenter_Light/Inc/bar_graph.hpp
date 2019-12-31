@@ -15,6 +15,7 @@ class BarGraph {
       BarGraph(uint8_t num_switch, uint8_t num_led);
       void begin();
       void update(uint8_t *sw_state);
+      void clear_display();
 };
 
 #endif  //bar_graph.hpp

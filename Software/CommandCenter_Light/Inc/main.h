@@ -100,6 +100,8 @@ void Error_Handler(void);
 #define BG_SW_4_GPIO_Port GPIOB
 #define BG_SW_5_Pin GPIO_PIN_9
 #define BG_SW_5_GPIO_Port GPIOB
+#define WKUP_Pin GPIO_PIN_0
+#define WKUP_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

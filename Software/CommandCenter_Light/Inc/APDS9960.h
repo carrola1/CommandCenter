@@ -174,7 +174,7 @@ typedef enum {
 } color_t;
 
 // Color filter
-#define len_color_filt 3
+#define len_color_filt 4
 
 #define APDS9960_UP 0x01    /**< Gesture Up */
 #define APDS9960_DOWN 0x02  /**< Gesture Down */

@@ -52,8 +52,8 @@ CommandCenter_Light.list \
 all: CommandCenter_Light.elf secondary-outputs
 
 # Tool invocations
-CommandCenter_Light.elf: $(OBJS) $(USER_OBJS) C:\GitHub\CommandCenter\Software\CommandCenter_Light\STM32L052C8TX_FLASH.ld
-	arm-none-eabi-g++ -o "CommandCenter_Light.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"C:\GitHub\CommandCenter\Software\CommandCenter_Light\STM32L052C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="CommandCenter_Light.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+CommandCenter_Light.elf: $(OBJS) $(USER_OBJS) /home/andrew/Documents/GitHub/CommandCenter/Software/CommandCenter_Light/STM32L052C8TX_FLASH.ld
+	arm-none-eabi-g++ -o "CommandCenter_Light.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"/home/andrew/Documents/GitHub/CommandCenter/Software/CommandCenter_Light/STM32L052C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="CommandCenter_Light.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
