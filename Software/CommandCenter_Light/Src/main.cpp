@@ -108,6 +108,8 @@ int main(void)
 
   /* USER CODE BEGIN SysInit */
   void send_audio(uint8_t audio_trig_index);
+  GPIO_PinState * read_sw_states(void);
+  uint8_t * read_bg_states(void);
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -126,7 +128,7 @@ int main(void)
   sw_states_old[1] = HAL_GPIO_ReadPin(SW_1_GPIO_Port, SW_1_Pin);
   sw_states_old[2] = HAL_GPIO_ReadPin(SW_2_GPIO_Port, SW_2_Pin);
   sw_states_old[3] = HAL_GPIO_ReadPin(SW_3_GPIO_Port, SW_3_Pin);
-  GPIO_PinState sw_states_new[4];
+  GPIO_PinState* sw_states_new;
   
   // Setup and initialize Dotstars
   DotStar ring = DotStar(20, DOTSTAR_BGR);
@@ -144,7 +146,7 @@ int main(void)
   BarGraph bg=BarGraph(8,40);
   bg.begin();
   uint8_t bg_sw_old[8];
-  uint8_t bg_sw_new[8];
+  uint8_t* bg_sw_new;
   bg_sw_old[0] = !HAL_GPIO_ReadPin(BG_SW_0_GPIO_Port, BG_SW_0_Pin);
   bg_sw_old[1] = !HAL_GPIO_ReadPin(BG_SW_1_GPIO_Port, BG_SW_1_Pin);
   bg_sw_old[2] = !HAL_GPIO_ReadPin(BG_SW_2_GPIO_Port, BG_SW_2_Pin);
@@ -174,9 +176,9 @@ int main(void)
   uint8_t color_det_timer = 0;
 
   // Wake switch
-  GPIO_PinState wake_sw_state_old;
-  GPIO_PinState wake_sw_state_new;
-  wake_sw_state_old = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
+  GPIO_PinState wake_sw_state;
+  uint8_t wake_det;
+  uint8_t inactivity_det = 0;
 
   HAL_Delay(500);
 
@@ -193,18 +195,23 @@ int main(void)
 
     ///////////////////////////////////////////////////////////////////////////////////
     // Check if audio is currently being played
+    // Check if inactivity detected
     ///////////////////////////////////////////////////////////////////////////////////
     HAL_UART_Receive_IT(&huart1, &uart_data, 1);
     if (uart_ready == 1) {
-      audio_playing = uart_data;
+      if (uart_data < 2) {
+        audio_playing = uart_data;
+      } else {
+        inactivity_det = uart_data - 2;
+      }
       uart_ready = 0;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////
     // Wake/Sleep Function
     ///////////////////////////////////////////////////////////////////////////////////
-    wake_sw_state_new = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
-    if ((wake_sw_state_new == GPIO_PIN_SET) & (wake_sw_state_old == GPIO_PIN_RESET)) {
+    wake_sw_state = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
+    if ((wake_sw_state == GPIO_PIN_SET) | inactivity_det) {
       ring_set_all_pixels(ring, rgb_off);
       HAL_GPIO_WritePin(LED_0_GPIO_Port, LED_0_Pin, GPIO_PIN_RESET);
       HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_RESET);
@@ -212,22 +219,47 @@ int main(void)
       HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_RESET);
       bg.clear_display();
       color_find_timer = 50;
-      HAL_Delay(200);
+      HAL_Delay(100);
     }
-    while (wake_sw_state_new == GPIO_PIN_SET) {
+    wake_det = 0;
+    while (wake_sw_state == GPIO_PIN_SET) {
       // do nothing
-      wake_sw_state_new = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
+      wake_sw_state = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
+      wake_det = 1;
     }
-    wake_sw_state_old = wake_sw_state_new;
+    if (wake_det == 1) {
+      audio_playing = 1;  // engine start sound will play
+    }
+
+    while (inactivity_det == 1) {
+      sw_states_new = read_sw_states();
+      for (uint8_t sw_i = 0; sw_i < 4; sw_i++) {
+        if (sw_states_new[sw_i] != sw_states_old[sw_i]) {
+          inactivity_det = 0;
+        }
+      }
+
+      bg_sw_new = read_bg_states();
+      for (uint8_t i = 0; i < 8; i++) {
+        if (bg_sw_new[i] != bg_sw_old[i]) {
+          inactivity_det = 0;
+        }
+      }
+
+      HAL_UART_Receive_IT(&huart1, &uart_data, 1);
+      if (uart_ready == 1) {
+        if (uart_data == 2) {
+          inactivity_det = 0;
+        }
+      }
+    }
+
     HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
 
     ///////////////////////////////////////////////////////////////////////////////////
     // Toggle switches
     ///////////////////////////////////////////////////////////////////////////////////
-    sw_states_new[0] = HAL_GPIO_ReadPin(SW_0_GPIO_Port, SW_0_Pin);
-    sw_states_new[1] = HAL_GPIO_ReadPin(SW_1_GPIO_Port, SW_1_Pin);
-    sw_states_new[2] = HAL_GPIO_ReadPin(SW_2_GPIO_Port, SW_2_Pin);
-    sw_states_new[3] = HAL_GPIO_ReadPin(SW_3_GPIO_Port, SW_3_Pin);
+    sw_states_new = read_sw_states();
     HAL_GPIO_WritePin(LED_0_GPIO_Port, LED_0_Pin, sw_states_new[0]);
     HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, sw_states_new[1]);
     HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, sw_states_new[2]);
@@ -248,18 +280,22 @@ int main(void)
     ///////////////////////////////////////////////////////////////////////////////////
     // Bar Graph
     ///////////////////////////////////////////////////////////////////////////////////
-    bg_sw_new[0] = !HAL_GPIO_ReadPin(BG_SW_0_GPIO_Port, BG_SW_0_Pin);
-    bg_sw_new[1] = !HAL_GPIO_ReadPin(BG_SW_1_GPIO_Port, BG_SW_1_Pin);
-    bg_sw_new[2] = !HAL_GPIO_ReadPin(BG_SW_2_GPIO_Port, BG_SW_2_Pin);
-    bg_sw_new[3] = !HAL_GPIO_ReadPin(BG_SW_3_GPIO_Port, BG_SW_3_Pin);
-    bg_sw_new[4] = !HAL_GPIO_ReadPin(BG_SW_4_GPIO_Port, BG_SW_4_Pin);
-    bg_sw_new[5] = !HAL_GPIO_ReadPin(BG_SW_5_GPIO_Port, BG_SW_5_Pin);
-    bg_sw_new[6] = !HAL_GPIO_ReadPin(BG_SW_6_GPIO_Port, BG_SW_6_Pin);
-    bg_sw_new[7] = !HAL_GPIO_ReadPin(BG_SW_7_GPIO_Port, BG_SW_7_Pin);
+    bg_sw_new = read_bg_states();
+    for (uint8_t i = 0; i < 8; i++) {
+      if (bg_sw_new[i] != bg_sw_old[i]) {
+        HAL_Delay(100); // allow some debounce
+        break;
+      }
+    }
+    bg_sw_new = read_bg_states();
     bg.update(&bg_sw_new[0]);
     for (uint8_t i = 0; i < 8; i++) {
       if (bg_sw_new[i] != bg_sw_old[i]) {
-        send_audio(AUDIO_TRIG_BG);
+        if (bg_sw_new[i] > bg_sw_old[i]) {
+          send_audio(AUDIO_TRIG_BG_UP);
+        } else {
+          send_audio(AUDIO_TRIG_BG_DOWN);
+        }
         bg_sw_old[i] = bg_sw_new[i];
       } 
     }
@@ -270,7 +306,7 @@ int main(void)
     if (color_find_timer == 0) {
       if (color_found) {
         color_to_find = (HAL_RNG_GetRandomNumber(&hrng) % 7);
-        color_to_find_msg = color_to_find + 5;
+        color_to_find_msg = color_to_find + 7;
         if (color_to_find == RED) {
           rgb_new.r = 180;
           rgb_new.g = 0;
@@ -319,7 +355,7 @@ int main(void)
           g = g - 3500; //Adjust for offset from blue PCB 
           b = b - 9500; //Adjust for offset from blue PCB
           color_t color;
-          color = apds.colorSort(r, g, b);
+          color = apds.colorSort(r, g, b, color_total);
 
           if (color != UNKNOWN) {
             if (color == color_to_find) {
@@ -335,7 +371,7 @@ int main(void)
             } else {
               uint8_t color_found_fail_msg = color_to_find_msg + 14;
               send_audio(color_found_fail_msg);
-              color_det_timer = 20;
+              color_det_timer = 25;
             }
           }
         }
@@ -423,6 +459,28 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+GPIO_PinState * read_sw_states(void) {
+  static GPIO_PinState sw_states[4];
+  sw_states[0] = HAL_GPIO_ReadPin(SW_0_GPIO_Port, SW_0_Pin);
+  sw_states[1] = HAL_GPIO_ReadPin(SW_1_GPIO_Port, SW_1_Pin);
+  sw_states[2] = HAL_GPIO_ReadPin(SW_2_GPIO_Port, SW_2_Pin);
+  sw_states[3] = HAL_GPIO_ReadPin(SW_3_GPIO_Port, SW_3_Pin);
+  return sw_states;
+}
+
+uint8_t * read_bg_states(void) {
+  static uint8_t bg_sw_states[8];
+  bg_sw_states[0] = !HAL_GPIO_ReadPin(BG_SW_0_GPIO_Port, BG_SW_0_Pin);
+  bg_sw_states[1] = !HAL_GPIO_ReadPin(BG_SW_1_GPIO_Port, BG_SW_1_Pin);
+  bg_sw_states[2] = !HAL_GPIO_ReadPin(BG_SW_2_GPIO_Port, BG_SW_2_Pin);
+  bg_sw_states[3] = !HAL_GPIO_ReadPin(BG_SW_3_GPIO_Port, BG_SW_3_Pin);
+  bg_sw_states[4] = !HAL_GPIO_ReadPin(BG_SW_4_GPIO_Port, BG_SW_4_Pin);
+  bg_sw_states[5] = !HAL_GPIO_ReadPin(BG_SW_5_GPIO_Port, BG_SW_5_Pin);
+  bg_sw_states[6] = !HAL_GPIO_ReadPin(BG_SW_6_GPIO_Port, BG_SW_6_Pin);
+  bg_sw_states[7] = !HAL_GPIO_ReadPin(BG_SW_7_GPIO_Port, BG_SW_7_Pin);
+  return bg_sw_states;
+}
+
 void send_audio(uint8_t audio_trig_index) {
   if (audio_playing == 0) {
     HAL_UART_Transmit(&huart1, &audio_trig_index, 1, HAL_MAX_DELAY);

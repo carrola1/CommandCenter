@@ -231,7 +231,7 @@ public:
   void disableColorInterrupt();
   void clearInterrupt();
   void setIntLimits(uint16_t l, uint16_t h);
-  color_t colorSort(uint16_t r, uint16_t g, uint16_t b);
+  color_t colorSort(uint16_t r, uint16_t g, uint16_t b, uint32_t color_total);
 
   // turn on/off elements
   void enable(bool en = true);

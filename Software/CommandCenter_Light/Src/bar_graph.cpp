@@ -21,10 +21,6 @@ void BarGraph::begin() {
   /* and clear the display */
   lc.clearDisplay(0);
 
-  for (uint8_t i=0; i<incr; i++) {
-    lc.setLed(0,i,0,true);
-  }
-
 }
 
 void BarGraph::update(uint8_t *sw_state) {

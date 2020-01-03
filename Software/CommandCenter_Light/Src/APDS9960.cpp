@@ -636,28 +636,48 @@ void APDS9960::write(uint8_t reg, uint8_t value, uint8_t num) {
   HAL_I2C_Master_Transmit(&hi2c1, APDS9960_ADDRESS, &writedata[0], num, HAL_MAX_DELAY);
 }
 
-color_t APDS9960::colorSort(uint16_t r, uint16_t g, uint16_t b) {
-  uint32_t total = r + g + b;
-  float rPer = 1.0*r/total*100.0;
-  float gPer = 1.0*g/total*100.0;
-  float bPer = 1.0*b/total*100.0;
+color_t APDS9960::colorSort(uint16_t r, uint16_t g, uint16_t b, uint32_t color_total) {
+  uint32_t rgb_total = r + g + b;
+  float rPer = 1.0*r/rgb_total*100.0;
+  float gPer = 1.0*g/rgb_total*100.0;
+  float bPer = 1.0*b/rgb_total*100.0;
   color_t color;
-  if ((rPer > 35.0) & (gPer <= 28.0)) {
-    color = RED;
-  } else if ((rPer > 36.0) & (gPer > 28.0)) {
-    color = ORANGE;
-  } else if ((bPer > 49.0) & (rPer < 20.0)) {
-    color = BLUE;
-  } else if (gPer > 38.0) {
-    color = GREEN;
-  } else if ((gPer > 34.0) & (rPer > 26.0)) {
-    color = YELLOW;
-  } else if ((bPer > 48.0) & (rPer > 21.0)) {
-      color = PURPLE;
-  } else if ((rPer > 28.0) & (bPer > 39.0)){
-    color = PINK;
+  if (color_total > 75000) {
+    if ((rPer > 35.0) & (gPer <= 28.0)) {
+      color = RED;
+    } else if ((rPer > 36.0) & (gPer > 28.0)) {
+      color = ORANGE;
+    } else if ((bPer > 49.0) & (rPer < 20.0)) {
+      color = BLUE;
+    } else if (gPer > 38.5) {
+      color = GREEN;
+    } else if ((gPer > 34.0) & (rPer > 26.0)) {
+      color = YELLOW;
+    } else if ((bPer > 48.0) & (rPer > 21.0)) {
+        color = PURPLE;
+    } else if ((rPer > 28.0) & (bPer > 39.0)){
+      color = PINK;
+    } else {
+      color = UNKNOWN;
+    }
   } else {
-    color = UNKNOWN;
+    if ((rPer > 35.0) & (gPer <= 28.0)) {
+      color = RED;
+    } else if ((rPer > 36.0) & (gPer > 28.0)) {
+      color = ORANGE;
+    } else if ((bPer > 49.0) & (rPer < 20.0)) {
+      color = BLUE;
+    } else if (gPer > 38.5) {
+      color = GREEN;
+    } else if ((gPer > 34.0) & (rPer > 26.0)) {
+      color = YELLOW;
+    } else if ((bPer > 48.0) & (rPer > 21.0)) {
+        color = PURPLE;
+    } else if ((rPer > 28.0) & (bPer > 39.0)){
+      color = PINK;
+    } else {
+      color = UNKNOWN;
+    }
   }
 
   // shift new value into color filter

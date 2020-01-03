@@ -54,9 +54,11 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+#define INACTIVITY_CNT_MAX 50000
 uint8_t uart_data;
-uint8_t uart_ready = 1;
+uint8_t uart_ready = 0;
 uint8_t audio_playing = 0;
+uint16_t inactivity_cnt = INACTIVITY_CNT_MAX;
 FATFS FatFs;
 /* USER CODE END PV */
 
@@ -139,6 +141,7 @@ int main(void)
 
   // Wake switch
   GPIO_PinState wake_sw_state;
+  uint8_t wake_det;
 
   // Test LED
   HAL_GPIO_WritePin(TEST_LED_GPIO_Port, TEST_LED_Pin, GPIO_PIN_RESET);
@@ -153,10 +156,24 @@ int main(void)
     ///////////////////////////////////////////////////////////////////////////////////
     // Wake/Sleep Function
     ///////////////////////////////////////////////////////////////////////////////////
+    if (inactivity_cnt == 0) {
+      uint8_t inactivity_det_msg = 3;
+      HAL_UART_Transmit(&huart1, &inactivity_det_msg, 1, HAL_MAX_DELAY);
+      inactivity_cnt = INACTIVITY_CNT_MAX;
+    } else {
+      inactivity_cnt--;
+    }
+
+    wake_det = 0;
     wake_sw_state = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
     while (wake_sw_state == GPIO_PIN_SET) {
       // do nothing
+      HAL_Delay(100);
       wake_sw_state = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
+      wake_det = 1;
+    }
+    if (wake_det == 1) {
+      play_audio("start_engine.wav");
     }
     
     ///////////////////////////////////////////////////////////////////////////////////
@@ -168,17 +185,23 @@ int main(void)
     if ((motor_state_0 == 0) & (motor_state_last != 0)) {
       __HAL_LPTIM_COMPARE_SET(&hlptim1, 0x0258);
       HAL_Delay(100);
-      play_audio("pete_the_cat.wav");
+      if (wake_det == 0) {
+        play_audio("pete_the_cat.wav");
+      }
       motor_state_last = 0;
     } else if ((motor_state_1 == 0) & (motor_state_last != 1)) {
       __HAL_LPTIM_COMPARE_SET(&hlptim1, 0x0190);
       HAL_Delay(100);
-      play_audio("blues_clues.wav");
+      if (wake_det == 0) {
+        play_audio("snuggle_puppy.wav");
+      }
       motor_state_last = 1;
     } else if ((motor_state_2 == 0) & (motor_state_last != 2)) {
       __HAL_LPTIM_COMPARE_SET(&hlptim1, 0x00AF);
       HAL_Delay(100);
-      play_audio("elmo.wav");
+      if (wake_det == 0) {
+        play_audio("elmo.wav");
+      }
       motor_state_last = 2;
     }
 
@@ -195,8 +218,10 @@ int main(void)
         play_audio("blurp.wav");
       } else if (uart_data == AUDIO_TRIG_SW3){
         play_audio("boing.wav");
-      } else if (uart_data == AUDIO_TRIG_BG){
-        play_audio("ratchet.wav");
+      } else if (uart_data == AUDIO_TRIG_BG_UP){
+        play_audio("decrement.wav");
+      } else if (uart_data == AUDIO_TRIG_BG_DOWN){
+        play_audio("increment.wav");
       } else if (uart_data == AUDIO_TRIG_FIND_RED) {
     	  play_audio("find_red.wav");
       } else if (uart_data == AUDIO_TRIG_FIND_GREEN) {
@@ -335,6 +360,11 @@ void play_audio(char wav_file[32]) {
   HAL_Delay(10);
   HAL_UART_Receive_IT(&huart1, &uart_data, 1);	// clear pending interrupt
   uart_ready = 0;
+  if (inactivity_cnt == 0) {
+    uint8_t inactivity_det_msg = 2;
+    HAL_UART_Transmit(&huart1, &inactivity_det_msg, 1, HAL_MAX_DELAY);
+  }
+  inactivity_cnt = INACTIVITY_CNT_MAX;
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
