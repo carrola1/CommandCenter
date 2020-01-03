@@ -1,5 +1,7 @@
 APDS9960.h:190:3:APDS9960::APDS9960()	16	static
-main.cpp:88:5:int main()	224	static
+main.cpp:91:5:int main()	208	static
 main.cpp:367:6:void SystemClock_Config()	120	static
-main.cpp:426:6:void Error_Handler()	8	static
-main.cpp:435:6:void _Error_Handler(char*, int)	16	static
+main.cpp:426:6:void send_audio(uint8_t)	16	static
+main.cpp:433:6:void HAL_UART_RxCpltCallback(UART_HandleTypeDef*)	16	static
+main.cpp:437:6:void Error_Handler()	8	static
+main.cpp:446:6:void _Error_Handler(char*, int)	16	static

@@ -83,6 +83,32 @@ void Error_Handler(void);
 #define MOTOR_SW_2_Pin GPIO_PIN_8
 #define MOTOR_SW_2_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
+#define AUDIO_TRIG_SW0          0
+#define AUDIO_TRIG_SW1          1
+#define AUDIO_TRIG_SW2          2
+#define AUDIO_TRIG_SW3          3
+#define AUDIO_TRIG_BG           4
+#define AUDIO_TRIG_FIND_RED     5
+#define AUDIO_TRIG_FIND_GREEN   6
+#define AUDIO_TRIG_FIND_BLUE    7
+#define AUDIO_TRIG_FIND_YELLOW  8
+#define AUDIO_TRIG_FIND_PURPLE  9
+#define AUDIO_TRIG_FIND_PINK    10
+#define AUDIO_TRIG_FIND_ORANGE  11
+#define AUDIO_TRIG_FOUND_RED    12
+#define AUDIO_TRIG_FOUND_GREEN  13
+#define AUDIO_TRIG_FOUND_BLUE   14
+#define AUDIO_TRIG_FOUND_YELLOW 15
+#define AUDIO_TRIG_FOUND_PURPLE 16
+#define AUDIO_TRIG_FOUND_PINK   17
+#define AUDIO_TRIG_FOUND_ORANGE 18
+#define AUDIO_TRIG_MISS_RED     19
+#define AUDIO_TRIG_MISS_GREEN   20
+#define AUDIO_TRIG_MISS_BLUE    21
+#define AUDIO_TRIG_MISS_YELLOW  22
+#define AUDIO_TRIG_MISS_PURPLE  23
+#define AUDIO_TRIG_MISS_PINK    24
+#define AUDIO_TRIG_MISS_ORANGE  25
 
 /* USER CODE END Private defines */
 
