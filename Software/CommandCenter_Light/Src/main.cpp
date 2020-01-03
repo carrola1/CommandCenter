@@ -165,10 +165,11 @@ int main(void)
   uint16_t c;
   
   // Setup find color application
-  uint16_t color_find_timer_max = 200;
-  uint16_t color_find_timer = color_find_timer_max/2;
+  uint16_t color_find_timer_max = 10000;
+  uint16_t color_find_timer = 20;
   bool color_found = true;
   uint8_t color_to_find;
+  uint8_t color_to_find_msg;
 
   // Wake switch
   GPIO_PinState wake_sw_state_old;
@@ -188,6 +189,9 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
+    ///////////////////////////////////////////////////////////////////////////////////
+    // Wake/Sleep Function
+    ///////////////////////////////////////////////////////////////////////////////////
     wake_sw_state_new = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
     if ((wake_sw_state_new == GPIO_PIN_SET) & (wake_sw_state_old == GPIO_PIN_RESET)) {
       ring_set_all_pixels(ring, rgb_off);
@@ -196,6 +200,7 @@ int main(void)
       HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
       HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_RESET);
       bg.clear_display();
+      color_find_timer = 50;
       HAL_Delay(200);
     }
     while (wake_sw_state_new == GPIO_PIN_SET) {
@@ -205,7 +210,9 @@ int main(void)
     wake_sw_state_old = wake_sw_state_new;
     HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
 
-    // Check Toggle Switches
+    ///////////////////////////////////////////////////////////////////////////////////
+    // Toggle switches
+    ///////////////////////////////////////////////////////////////////////////////////
     sw_states_new[0] = HAL_GPIO_ReadPin(SW_0_GPIO_Port, SW_0_Pin);
     sw_states_new[1] = HAL_GPIO_ReadPin(SW_1_GPIO_Port, SW_1_Pin);
     sw_states_new[2] = HAL_GPIO_ReadPin(SW_2_GPIO_Port, SW_2_Pin);
@@ -232,8 +239,9 @@ int main(void)
       sw_states_old[sw_i] = sw_states_new[sw_i];
     } 
 
-
-    // read bar graph switch inputs and update graph 
+    ///////////////////////////////////////////////////////////////////////////////////
+    // Bar Graph
+    ///////////////////////////////////////////////////////////////////////////////////
     bg_sw_new[0] = !HAL_GPIO_ReadPin(BG_SW_0_GPIO_Port, BG_SW_0_Pin);
     bg_sw_new[1] = !HAL_GPIO_ReadPin(BG_SW_1_GPIO_Port, BG_SW_1_Pin);
     bg_sw_new[2] = !HAL_GPIO_ReadPin(BG_SW_2_GPIO_Port, BG_SW_2_Pin);
@@ -257,77 +265,92 @@ int main(void)
       bg_sw_old[i] = bg_sw_new[i];
     }
     
-    
-    // Get color sensor data
-    apds.getColorData(&r, &g, &b, &c);
-    uint32_t color_total = r + g + b + c;
-    if (color_total > 70000) {
-      g = g - 3500; //Adjust for offset from blue PCB 
-      b = b - 9500; //Adjust for offset from blue PCB
-      color_t color;
-      color = apds.colorSort(r, g, b);
-      if (color == RED) {
-        rgb_new.r = 180;
-        rgb_new.g = 0;
-        rgb_new.b = 0;
-      } else if (color == ORANGE) {
-        rgb_new.r = 180;
-        rgb_new.g = 100;
-        rgb_new.b = 0;
-      } else if (color == BLUE) {
-        rgb_new.r = 0;
-        rgb_new.g = 0;
-        rgb_new.b = 180;
-      } else if (color == GREEN) {
-        rgb_new.r = 0;
-        rgb_new.g = 180;
-        rgb_new.b = 0;
-      } else if (color == PINK) {
-        rgb_new.r = 180;
-        rgb_new.g = 10;
-        rgb_new.b = 80;
-      } else if (color == PURPLE) {
-        rgb_new.r = 120;
-        rgb_new.g = 10;
-        rgb_new.b = 180;
-      } else if (color == YELLOW) {
-        rgb_new.r = 180;
-        rgb_new.g = 140;
-        rgb_new.b = 0;
-      }
-
-      if (color != UNKNOWN) {
-        if (color == color_to_find-5) {
-          uint8_t color_found_success = color_to_find + 7;
-          HAL_UART_Transmit(&huart1, &color_found_success, 1, HAL_MAX_DELAY);
-          color_found = true;
-        } else {
-          uint8_t color_found_fail = color_to_find + 14;
-          HAL_UART_Transmit(&huart1, &color_found_fail, 1, HAL_MAX_DELAY);
-        }
-        color_find_timer = color_find_timer_max;
-      }
-    }
-
-    // Increment/decrement LED ring
-    if (ring_dir == 0) {
-      ring.incrRing(rgb_new);
-    } else {
-      ring.decrRing(rgb_new);
-    }
-
+    ///////////////////////////////////////////////////////////////////////////////////
+    // Pick color to find
+    ///////////////////////////////////////////////////////////////////////////////////
     if (color_find_timer == 0) {
       if (uart_holdoff == 0) {
         if (color_found) {
-          color_to_find = (HAL_RNG_GetRandomNumber(&hrng) % 7) + 5;
+          color_to_find = (HAL_RNG_GetRandomNumber(&hrng) % 7);
+          color_to_find_msg = color_to_find + 5;
+          if (color_to_find == RED) {
+            rgb_new.r = 180;
+            rgb_new.g = 0;
+            rgb_new.b = 0;
+          } else if (color_to_find == ORANGE) {
+            rgb_new.r = 180;
+            rgb_new.g = 100;
+            rgb_new.b = 0;
+          } else if (color_to_find == BLUE) {
+            rgb_new.r = 0;
+            rgb_new.g = 0;
+            rgb_new.b = 180;
+          } else if (color_to_find == GREEN) {
+            rgb_new.r = 0;
+            rgb_new.g = 180;
+            rgb_new.b = 0;
+          } else if (color_to_find == PINK) {
+            rgb_new.r = 180;
+            rgb_new.g = 10;
+            rgb_new.b = 80;
+          } else if (color_to_find == PURPLE) {
+            rgb_new.r = 120;
+            rgb_new.g = 10;
+            rgb_new.b = 180;
+          } else if (color_to_find == YELLOW) {
+            rgb_new.r = 180;
+            rgb_new.g = 140;
+            rgb_new.b = 0;
+          }
           color_found = false;
         }
-        HAL_UART_Transmit(&huart1, &color_to_find, 1, HAL_MAX_DELAY);
+        HAL_UART_Transmit(&huart1, &color_to_find_msg, 1, HAL_MAX_DELAY);
         uart_holdoff = uart_holdoff_max;
       }
       color_find_timer = color_find_timer_max;
     } else {
       color_find_timer--;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////
+    // Get color sense data and compare to color asked for
+    ///////////////////////////////////////////////////////////////////////////////////
+    apds.getColorData(&r, &g, &b, &c);
+    uint32_t color_total = r + g + b + c;
+    if (color_found == false) {
+      if (color_total > 62000) {
+        g = g - 3500; //Adjust for offset from blue PCB 
+        b = b - 9500; //Adjust for offset from blue PCB
+        color_t color;
+        color = apds.colorSort(r, g, b);
+
+        if (color != UNKNOWN) {
+          if (color == color_to_find) {
+            uint8_t color_found_success_msg = color_to_find_msg + 7;
+            HAL_UART_Transmit(&huart1, &color_found_success_msg, 1, HAL_MAX_DELAY);
+            ring.setBrightness(100);
+            ring_set_all_pixels(ring, rgb_new);
+            ring.show();
+            ring.setBrightness(200);
+            color_found = true;
+            color_find_timer = 50;
+            HAL_Delay(10000);
+          } else {
+            uint8_t color_found_fail_msg = color_to_find_msg + 14;
+            HAL_UART_Transmit(&huart1, &color_found_fail_msg, 1, HAL_MAX_DELAY);
+            color_find_timer = 40;
+          }
+        }
+      }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////
+    // LED ring update
+    ///////////////////////////////////////////////////////////////////////////////////
+    if (ring_dir == 0) {
+      ring.incrRing(rgb_new);
+    } else {
+      ring.decrRing(rgb_new);
     }
 
     HAL_Delay(15);

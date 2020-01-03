@@ -148,7 +148,6 @@ int main(void)
   {
     
     wake_sw_state = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
-    HAL_GPIO_WritePin(TEST_LED_GPIO_Port, TEST_LED_Pin, wake_sw_state);
     while (wake_sw_state == GPIO_PIN_SET) {
       // do nothing
       wake_sw_state = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
@@ -238,8 +237,12 @@ int main(void)
       } else {
     	  play_wav("try_again.wav");
       }
-      HAL_UART_Receive_IT(&huart1, &uart_data, 1);	// clear pending interrupt
-      uart_ready = 0;
+      if (uart_data < 19) {
+        // Clear pending interrupt except for after try_again
+    	// There is often a success immediately following a try_again
+    	HAL_UART_Receive_IT(&huart1, &uart_data, 1);
+        uart_ready = 0;
+      }
     }
 
     HAL_Delay(10);

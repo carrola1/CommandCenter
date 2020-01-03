@@ -644,7 +644,7 @@ color_t APDS9960::colorSort(uint16_t r, uint16_t g, uint16_t b) {
   color_t color;
   if ((rPer > 35.0) & (gPer <= 28.0)) {
     color = RED;
-  } else if ((rPer > 36.0) & (gPer > 29.0)) {
+  } else if ((rPer > 36.0) & (gPer > 28.0)) {
     color = ORANGE;
   } else if ((bPer > 49.0) & (rPer < 20.0)) {
     color = BLUE;
