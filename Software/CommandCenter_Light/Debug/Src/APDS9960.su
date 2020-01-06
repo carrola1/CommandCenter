@@ -1,15 +1,15 @@
-APDS9960.h:287:13:uint8_t APDS9960::enable::get()	16	static
-APDS9960.h:303:13:uint8_t APDS9960::pers::get()	16	static
-APDS9960.h:325:13:uint8_t APDS9960::ppulse::get()	16	static
-APDS9960.h:339:13:uint8_t APDS9960::control::get()	16	static
-APDS9960.h:355:13:uint8_t APDS9960::config2::get()	16	static
-APDS9960.h:400:10:void APDS9960::status::set(uint8_t)	16	static
-APDS9960.h:461:13:uint8_t APDS9960::gconf1::get()	16	static
-APDS9960.h:478:13:uint8_t APDS9960::gconf2::get()	16	static
-APDS9960.h:492:13:uint8_t APDS9960::gpulse::get()	16	static
-APDS9960.h:502:13:uint8_t APDS9960::gconf3::get()	16	static
-APDS9960.h:520:13:uint8_t APDS9960::gconf4::get()	16	static
-APDS9960.h:540:10:void APDS9960::gstatus::set(uint8_t)	16	static
+APDS9960.h:288:13:uint8_t APDS9960::enable::get()	16	static
+APDS9960.h:304:13:uint8_t APDS9960::pers::get()	16	static
+APDS9960.h:326:13:uint8_t APDS9960::ppulse::get()	16	static
+APDS9960.h:340:13:uint8_t APDS9960::control::get()	16	static
+APDS9960.h:356:13:uint8_t APDS9960::config2::get()	16	static
+APDS9960.h:401:10:void APDS9960::status::set(uint8_t)	16	static
+APDS9960.h:462:13:uint8_t APDS9960::gconf1::get()	16	static
+APDS9960.h:479:13:uint8_t APDS9960::gconf2::get()	16	static
+APDS9960.h:493:13:uint8_t APDS9960::gpulse::get()	16	static
+APDS9960.h:503:13:uint8_t APDS9960::gconf3::get()	16	static
+APDS9960.h:521:13:uint8_t APDS9960::gconf4::get()	16	static
+APDS9960.h:541:10:void APDS9960::gstatus::set(uint8_t)	16	static
 APDS9960.cpp:53:7:float powf(float, float)	24	static
 APDS9960.cpp:65:6:void APDS9960::enable(bool)	16	static
 APDS9960.cpp:82:6:bool APDS9960::begin(uint16_t, apds9960AGain_t, uint8_t)	32	static
@@ -51,4 +51,5 @@ APDS9960.cpp:584:10:uint16_t APDS9960::read16(uint8_t)	32	static
 APDS9960.cpp:597:10:uint16_t APDS9960::read16R(uint8_t)	32	static
 APDS9960.cpp:615:6:void APDS9960::read(uint8_t, uint8_t*, uint8_t)	48	static
 APDS9960.cpp:634:6:void APDS9960::write(uint8_t, uint8_t, uint8_t)	40	static
-APDS9960.cpp:639:9:color_t APDS9960::colorSort(uint16_t, uint16_t, uint16_t, uint32_t)	64	static
+APDS9960.cpp:639:9:color_t APDS9960::colorSort(uint16_t, uint16_t, uint16_t, uint32_t, uint8_t)	64	static
+APDS9960.cpp:708:6:void APDS9960::calibrate_sensor(uint16_t*, uint16_t*, uint32_t*)	88	static

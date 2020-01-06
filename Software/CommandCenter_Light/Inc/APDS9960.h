@@ -231,7 +231,8 @@ public:
   void disableColorInterrupt();
   void clearInterrupt();
   void setIntLimits(uint16_t l, uint16_t h);
-  color_t colorSort(uint16_t r, uint16_t g, uint16_t b, uint32_t color_total);
+  color_t colorSort(uint16_t r, uint16_t g, uint16_t b, uint32_t color_total, uint8_t color_to_find);
+  void calibrate_sensor(uint16_t *g_cal, uint16_t *b_cal, uint32_t *total_cal);
 
   // turn on/off elements
   void enable(bool en = true);

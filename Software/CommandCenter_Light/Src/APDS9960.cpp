@@ -636,48 +636,50 @@ void APDS9960::write(uint8_t reg, uint8_t value, uint8_t num) {
   HAL_I2C_Master_Transmit(&hi2c1, APDS9960_ADDRESS, &writedata[0], num, HAL_MAX_DELAY);
 }
 
-color_t APDS9960::colorSort(uint16_t r, uint16_t g, uint16_t b, uint32_t color_total) {
+color_t APDS9960::colorSort(uint16_t r, uint16_t g, uint16_t b, uint32_t color_total, uint8_t color_to_find) {
   uint32_t rgb_total = r + g + b;
   float rPer = 1.0*r/rgb_total*100.0;
   float gPer = 1.0*g/rgb_total*100.0;
   float bPer = 1.0*b/rgb_total*100.0;
   color_t color;
-  if (color_total > 75000) {
-    if ((rPer > 35.0) & (gPer <= 28.0)) {
-      color = RED;
-    } else if ((rPer > 36.0) & (gPer > 28.0)) {
-      color = ORANGE;
-    } else if ((bPer > 49.0) & (rPer < 20.0)) {
-      color = BLUE;
-    } else if (gPer > 38.5) {
-      color = GREEN;
-    } else if ((gPer > 34.0) & (rPer > 26.0)) {
-      color = YELLOW;
-    } else if ((bPer > 48.0) & (rPer > 21.0)) {
-        color = PURPLE;
-    } else if ((rPer > 28.0) & (bPer > 39.0)){
-      color = PINK;
-    } else {
-      color = UNKNOWN;
-    }
+
+  // Add fudge factor to improve probability of success
+  if (color_to_find == RED) {
+    rPer = rPer + 2;
+    gPer = gPer - 2;
+  } else if (color_to_find == ORANGE) {
+    rPer = rPer + 2;
+    gPer = gPer + 2;
+  } else if (color_to_find == BLUE) {
+    bPer = bPer + 2;
+    rPer = rPer - 2;
+  } else if (color_to_find == GREEN) {
+    gPer = gPer + 2;
+  } else if (color_to_find == YELLOW) {
+    rPer = rPer + 2;
+  } else if (color_to_find == PURPLE) {
+    bPer = bPer + 2;
+    rPer = rPer + 2;
+  } else if (color_to_find == PINK) {
+    rPer = rPer + 2;
+  }
+
+  if ((rPer > 35.0) & (gPer <= 28.0)) {
+    color = RED;
+  } else if ((rPer > 36.0) & (gPer > 28.0)) {
+    color = ORANGE;
+  } else if ((bPer > 49.0) & (rPer < 20.0)) {
+    color = BLUE;
+  } else if (gPer > 38.5) {
+    color = GREEN;
+  } else if ((gPer > 34.0) & (rPer > 26.0)) {
+    color = YELLOW;
+  } else if ((bPer > 48.0) & (rPer > 21.0)) {
+      color = PURPLE;
+  } else if ((rPer > 28.0) & (bPer > 39.0)){
+    color = PINK;
   } else {
-    if ((rPer > 35.0) & (gPer <= 28.0)) {
-      color = RED;
-    } else if ((rPer > 36.0) & (gPer > 28.0)) {
-      color = ORANGE;
-    } else if ((bPer > 49.0) & (rPer < 20.0)) {
-      color = BLUE;
-    } else if (gPer > 38.5) {
-      color = GREEN;
-    } else if ((gPer > 34.0) & (rPer > 26.0)) {
-      color = YELLOW;
-    } else if ((bPer > 48.0) & (rPer > 21.0)) {
-        color = PURPLE;
-    } else if ((rPer > 28.0) & (bPer > 39.0)){
-      color = PINK;
-    } else {
-      color = UNKNOWN;
-    }
+    color = UNKNOWN;
   }
 
   // shift new value into color filter
@@ -701,4 +703,35 @@ color_t APDS9960::colorSort(uint16_t r, uint16_t g, uint16_t b, uint32_t color_t
   } else {
     return UNKNOWN;
   }
+}
+
+void APDS9960::calibrate_sensor(uint16_t *g_cal, uint16_t *b_cal, uint32_t *total_cal) {
+  uint16_t r_samp; 
+  uint16_t g_samp; 
+  uint16_t b_samp;
+  uint16_t c_samp;
+  uint16_t r_avg; 
+  uint16_t g_avg; 
+  uint16_t b_avg; 
+  uint16_t c_avg; 
+  uint32_t r_total = 0;
+  uint32_t g_total = 0;
+  uint32_t b_total = 0;
+  uint32_t c_total = 0;
+
+  for (uint8_t i = 0; i<4; i++) {
+    getColorData(&r_samp, &g_samp, &b_samp, &c_samp);
+    r_total = r_total + r_samp;
+    g_total = g_total + g_samp;
+    b_total = b_total + b_samp;
+    c_total = c_total + c_samp;
+    HAL_Delay(50);
+  }
+  r_avg = r_total/4;
+  g_avg = g_total/4;
+  b_avg = b_total/4;
+  c_avg = c_total/4;
+  *g_cal = g_avg-r_avg;
+  *b_cal = b_avg-r_avg;
+  *total_cal = r_avg + g_avg + b_avg + c_avg;
 }

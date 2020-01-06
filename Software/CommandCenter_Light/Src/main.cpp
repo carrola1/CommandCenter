@@ -166,6 +166,12 @@ int main(void)
   uint16_t g; 
   uint16_t b; 
   uint16_t c;
+  uint16_t g_cal;
+  uint16_t b_cal;
+  uint32_t total_cal;
+  HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
+  HAL_Delay(3000);
+  apds.calibrate_sensor(&g_cal, &b_cal, &total_cal);
   
   // Setup find color application
   uint16_t color_find_timer_max = 10000;
@@ -179,8 +185,7 @@ int main(void)
   GPIO_PinState wake_sw_state;
   uint8_t wake_det;
   uint8_t inactivity_det = 0;
-
-  HAL_Delay(500);
+  uint8_t activity_det;
 
   /* USER CODE END 2 */
 
@@ -229,8 +234,12 @@ int main(void)
     }
     if (wake_det == 1) {
       audio_playing = 1;  // engine start sound will play
+      HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
+      HAL_Delay(3000);
+      apds.calibrate_sensor(&g_cal, &b_cal, &total_cal);
     }
 
+    activity_det = 0;
     while (inactivity_det == 1) {
       sw_states_new = read_sw_states();
       for (uint8_t sw_i = 0; sw_i < 4; sw_i++) {
@@ -252,9 +261,14 @@ int main(void)
           inactivity_det = 0;
         }
       }
+      activity_det = 1;
     }
 
-    HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
+    if (activity_det == 1) {
+      HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
+      HAL_Delay(3000);
+      apds.calibrate_sensor(&g_cal, &b_cal, &total_cal);
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////
     // Toggle switches
@@ -351,11 +365,11 @@ int main(void)
     uint32_t color_total = r + g + b + c;
     if (color_det_timer == 0) {
       if (color_found == false) {
-        if (color_total > 62000) {
-          g = g - 3500; //Adjust for offset from blue PCB 
-          b = b - 9500; //Adjust for offset from blue PCB
+        if (color_total > (total_cal + 5000)) {
+          g = g - g_cal; //Adjust for offset from blue PCB 
+          b = b - b_cal; //Adjust for offset from blue PCB
           color_t color;
-          color = apds.colorSort(r, g, b, color_total);
+          color = apds.colorSort(r, g, b, color_total, color_to_find);
 
           if (color != UNKNOWN) {
             if (color == color_to_find) {
