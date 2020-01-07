@@ -24,13 +24,6 @@ void play_wav(char wav_file[32]) {
         // covert raw bytes from wav file into 16-bit audio samples
         for (int ii=0; ii<511; ii+=2) {
             *ptr = ((uint16_t)wav_buf[ii+1] << 8) | (uint16_t)wav_buf[ii];
-              if (*ptr > 32767) {
-            	//*ptr = (*ptr >> 1) + 32768;
-                *ptr = (*ptr >> 2) + 49152;
-              } else {
-            	//*ptr = *ptr >> 1;
-                *ptr = *ptr >> 2;
-              }
             ptr++;
         }
 
