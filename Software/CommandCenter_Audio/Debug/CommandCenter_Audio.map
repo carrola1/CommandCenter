@@ -4809,7 +4809,7 @@ OUTPUT(CommandCenter_Audio.elf elf32-littlearm)
  .debug_macro   0x00000000000145b7      0x1dd Src/usart.o
  .debug_macro   0x0000000000014794      0x217 Src/wav_player.o
 
-.debug_line     0x0000000000000000     0xe0ff
+.debug_line     0x0000000000000000     0xe0fd
  .debug_line    0x0000000000000000      0x8ed Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal.o
  .debug_line    0x00000000000008ed      0x8cc Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_cortex.o
  .debug_line    0x00000000000011b9      0x970 Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal_dma.o
@@ -4835,8 +4835,8 @@ OUTPUT(CommandCenter_Audio.elf elf32-littlearm)
  .debug_line    0x000000000000c3f5      0x72e Src/stm32l0xx_it.o
  .debug_line    0x000000000000cb23      0x6e7 Src/system_stm32l0xx.o
  .debug_line    0x000000000000d20a      0x720 Src/usart.o
- .debug_line    0x000000000000d92a      0x750 Src/wav_player.o
- .debug_line    0x000000000000e07a       0x85 Startup/startup_stm32l052c8tx.o
+ .debug_line    0x000000000000d92a      0x74e Src/wav_player.o
+ .debug_line    0x000000000000e078       0x85 Startup/startup_stm32l052c8tx.o
 
 .debug_str      0x0000000000000000    0x761d2
  .debug_str     0x0000000000000000    0x71554 Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_hal.o
