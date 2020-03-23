@@ -264,6 +264,20 @@ int main(void)
         play_audio("you_did_it.wav");
         HAL_Delay(100);
         play_audio("orange.wav");
+      } else if (uart_data == AUDIO_TRIG_MISS_RED) {
+		    play_audio("red.wav");
+      } else if (uart_data == AUDIO_TRIG_MISS_GREEN) {
+        play_audio("green.wav");
+      } else if (uart_data == AUDIO_TRIG_MISS_BLUE) {
+        play_audio("blue.wav");
+      } else if (uart_data == AUDIO_TRIG_MISS_YELLOW) {
+        play_audio("yellow.wav");
+      } else if (uart_data == AUDIO_TRIG_MISS_PURPLE) {
+        play_audio("purple.wav");
+      } else if (uart_data == AUDIO_TRIG_MISS_PINK) {
+        play_audio("pink.wav");
+      } else if (uart_data == AUDIO_TRIG_MISS_ORANGE) {
+        play_audio("orange.wav");
       } else {
     	  play_audio("try_again.wav");
       }

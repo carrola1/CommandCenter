@@ -1,9 +1,9 @@
 APDS9960.h:190:3:APDS9960::APDS9960()	16	static
 main.cpp:91:5:int main()	224	static
-main.cpp:417:6:void SystemClock_Config()	120	static
-main.cpp:476:17:GPIO_PinState* read_sw_states()	8	static
-main.cpp:485:11:uint8_t* read_bg_states()	8	static
-main.cpp:498:6:void send_audio(uint8_t)	16	static
-main.cpp:505:6:void HAL_UART_RxCpltCallback(UART_HandleTypeDef*)	16	static
-main.cpp:509:6:void Error_Handler()	8	static
-main.cpp:518:6:void _Error_Handler(char*, int)	16	static
+main.cpp:428:6:void SystemClock_Config()	120	static
+main.cpp:487:17:GPIO_PinState* read_sw_states()	8	static
+main.cpp:496:11:uint8_t* read_bg_states()	8	static
+main.cpp:509:6:void send_audio(uint8_t)	16	static
+main.cpp:516:6:void HAL_UART_RxCpltCallback(UART_HandleTypeDef*)	16	static
+main.cpp:520:6:void Error_Handler()	8	static
+main.cpp:529:6:void _Error_Handler(char*, int)	16	static

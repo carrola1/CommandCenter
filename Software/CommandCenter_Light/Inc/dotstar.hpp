@@ -42,6 +42,14 @@ struct RGB_VALS
     uint8_t b;
   };
 
+const RGB_VALS RED_RGB = {180, 0, 0};
+const RGB_VALS ORANGE_RGB = {180, 100, 0};
+const RGB_VALS BLUE_RGB = {0, 0, 180};
+const RGB_VALS GREEN_RGB = {0, 180, 0};
+const RGB_VALS PINK_RGB = {180, 10, 80};
+const RGB_VALS PURPLE_RGB = {120, 10, 180};
+const RGB_VALS YELLOW_RGB = {180, 140, 0};
+
 class DotStar {
 
  public:

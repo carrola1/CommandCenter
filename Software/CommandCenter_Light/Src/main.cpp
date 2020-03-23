@@ -257,8 +257,9 @@ int main(void)
 
       HAL_UART_Receive_IT(&huart1, &uart_data, 1);
       if (uart_ready == 1) {
-        if (uart_data == 2) {
+        if (uart_data == 1) {
           inactivity_det = 0;
+          audio_playing = 1;
         }
       }
       activity_det = 1;
@@ -322,33 +323,19 @@ int main(void)
         color_to_find = (HAL_RNG_GetRandomNumber(&hrng) % 7);
         color_to_find_msg = color_to_find + 7;
         if (color_to_find == RED) {
-          rgb_new.r = 180;
-          rgb_new.g = 0;
-          rgb_new.b = 0;
+          rgb_new = RED_RGB;
         } else if (color_to_find == ORANGE) {
-          rgb_new.r = 180;
-          rgb_new.g = 100;
-          rgb_new.b = 0;
+          rgb_new = ORANGE_RGB;
         } else if (color_to_find == BLUE) {
-          rgb_new.r = 0;
-          rgb_new.g = 0;
-          rgb_new.b = 180;
+          rgb_new = BLUE_RGB;
         } else if (color_to_find == GREEN) {
-          rgb_new.r = 0;
-          rgb_new.g = 180;
-          rgb_new.b = 0;
+          rgb_new = GREEN_RGB;
         } else if (color_to_find == PINK) {
-          rgb_new.r = 180;
-          rgb_new.g = 10;
-          rgb_new.b = 80;
+          rgb_new = PINK_RGB;
         } else if (color_to_find == PURPLE) {
-          rgb_new.r = 120;
-          rgb_new.g = 10;
-          rgb_new.b = 180;
+          rgb_new = PURPLE_RGB;
         } else if (color_to_find == YELLOW) {
-          rgb_new.r = 180;
-          rgb_new.g = 140;
-          rgb_new.b = 0;
+          rgb_new = YELLOW_RGB;
         }
         color_found = false;
       }
@@ -383,9 +370,33 @@ int main(void)
               color_find_timer = 50;
               HAL_Delay(10000);
             } else {
-              uint8_t color_found_fail_msg = color_to_find_msg + 14;
+              uint8_t color_found_fail_msg = color + 21;
               send_audio(color_found_fail_msg);
-              color_det_timer = 25;
+              //color_det_timer = 25;
+
+              // Temporary code to allow the wrong color to work (for Ethan)
+              ring.setBrightness(100);
+              if (color == RED) {
+                ring_set_all_pixels(ring, RED_RGB);
+              } else if (color == ORANGE) {
+                ring_set_all_pixels(ring, ORANGE_RGB);
+              } else if (color == BLUE) {
+                ring_set_all_pixels(ring, BLUE_RGB);
+              } else if (color == GREEN) {
+                ring_set_all_pixels(ring, GREEN_RGB);
+              } else if (color == PINK) {
+                ring_set_all_pixels(ring, PINK_RGB);
+              } else if (color == PURPLE) {
+                ring_set_all_pixels(ring, PURPLE_RGB);
+              } else if (color == YELLOW) {
+                ring_set_all_pixels(ring, YELLOW_RGB);
+              }
+              ring.show();
+              ring.setBrightness(200);
+              color_found = true;
+              color_find_timer = 50;
+              HAL_Delay(10000);
+              //////////////////////////////////////////////////////////////
             }
           }
         }
