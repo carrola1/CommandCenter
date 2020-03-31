@@ -31,6 +31,7 @@
 "Src/i2s.o"
 "Src/lptim.o"
 "Src/main.o"
+"Src/motor.o"
 "Src/spi.o"
 "Src/stm32l0xx_hal_msp.o"
 "Src/stm32l0xx_it.o"

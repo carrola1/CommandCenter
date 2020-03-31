@@ -23,6 +23,7 @@
 "Src/dotstar.o"
 "Src/gpio.o"
 "Src/i2c.o"
+"Src/light_control_funcs.o"
 "Src/main.o"
 "Src/ring_effects.o"
 "Src/rng.o"

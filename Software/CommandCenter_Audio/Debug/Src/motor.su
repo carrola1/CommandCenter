@@ -1,0 +1,3 @@
+motor.c:3:13:update_motor	16	static
+motor.c:42:13:get_motor_position	16	static
+motor.c:68:6:set_motor_position	8	static

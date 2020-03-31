@@ -657,6 +657,7 @@ color_t APDS9960::colorSort(uint16_t r, uint16_t g, uint16_t b, uint32_t color_t
     gPer = gPer + 2;
   } else if (color_to_find == YELLOW) {
     rPer = rPer + 2;
+    gPer = gPer - 2;
   } else if (color_to_find == PURPLE) {
     bPer = bPer + 2;
     rPer = rPer + 2;

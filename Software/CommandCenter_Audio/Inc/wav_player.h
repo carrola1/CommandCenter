@@ -13,15 +13,14 @@
 //const uint16_t buf_size = 256;
 
 uint8_t wav_buf[512];
-uint16_t audio_buf_0[256];
-uint16_t audio_buf_1[256];
-uint16_t *ptr;
-uint16_t *ptr_start;
 UINT bytes_read;
 
 FRESULT fr;     /* FatFs return code */
 
 void play_wav(char wav_file[32]);
+void open_wav(char wav_file[32]);
+uint8_t play_chunk(void);
+void close_wav(void);
 
 
 #ifdef __cplusplus

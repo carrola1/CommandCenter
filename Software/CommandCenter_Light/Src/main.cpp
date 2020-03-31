@@ -58,6 +58,7 @@
 #include "bar_graph.hpp"
 #include "APDS9960.h"
 #include "usart.h"
+#include "light_control_funcs.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -67,9 +68,16 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-uint8_t uart_data;
 uint8_t uart_ready = 1;
-uint8_t audio_playing = 0;
+uint8_t uart_data;
+
+uint8_t bg_sw_states[8];
+GPIO_PinState tog_sw_states[3];
+GPIO_PinState push_sw_state;
+
+// Color State Machine
+color_states color_state = ST_color_calibrate;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -107,9 +115,6 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  void send_audio(uint8_t audio_trig_index);
-  GPIO_PinState * read_sw_states(void);
-  uint8_t * read_bg_states(void);
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -122,39 +127,17 @@ int main(void)
 
   HAL_Delay(200);
 
-  // Remember switch states
-  GPIO_PinState sw_states_old[4];
-  sw_states_old[0] = HAL_GPIO_ReadPin(SW_0_GPIO_Port, SW_0_Pin);
-  sw_states_old[1] = HAL_GPIO_ReadPin(SW_1_GPIO_Port, SW_1_Pin);
-  sw_states_old[2] = HAL_GPIO_ReadPin(SW_2_GPIO_Port, SW_2_Pin);
-  sw_states_old[3] = HAL_GPIO_ReadPin(SW_3_GPIO_Port, SW_3_Pin);
-  GPIO_PinState* sw_states_new;
-  
   // Setup and initialize Dotstars
   DotStar ring = DotStar(20, DOTSTAR_BGR);
   ring.begin(); // Initialize pins for output
   RGB_VALS rgb_off;
   rgb_off.r = 0; rgb_off.g = 0; rgb_off.b = 0;
-  ring_set_all_pixels(ring, rgb_off); // Initialize LEDs to off
-  RGB_VALS rgb_default; 
-  RGB_VALS rgb_new;
-  rgb_default.r = 20; rgb_default.g = 10; rgb_default.b = 180;
   ring.setBrightness(200);
   uint8_t ring_dir = 0;
 
   // Initialize LED driver
   BarGraph bg=BarGraph(8,40);
   bg.begin();
-  uint8_t bg_sw_old[8];
-  uint8_t* bg_sw_new;
-  bg_sw_old[0] = !HAL_GPIO_ReadPin(BG_SW_0_GPIO_Port, BG_SW_0_Pin);
-  bg_sw_old[1] = !HAL_GPIO_ReadPin(BG_SW_1_GPIO_Port, BG_SW_1_Pin);
-  bg_sw_old[2] = !HAL_GPIO_ReadPin(BG_SW_2_GPIO_Port, BG_SW_2_Pin);
-  bg_sw_old[3] = !HAL_GPIO_ReadPin(BG_SW_3_GPIO_Port, BG_SW_3_Pin);
-  bg_sw_old[4] = !HAL_GPIO_ReadPin(BG_SW_4_GPIO_Port, BG_SW_4_Pin);
-  bg_sw_old[5] = !HAL_GPIO_ReadPin(BG_SW_5_GPIO_Port, BG_SW_5_Pin);
-  bg_sw_old[6] = !HAL_GPIO_ReadPin(BG_SW_6_GPIO_Port, BG_SW_6_Pin);
-  bg_sw_old[7] = !HAL_GPIO_ReadPin(BG_SW_7_GPIO_Port, BG_SW_7_Pin);
 
   // Setup Color Sensor
   APDS9960 apds;
@@ -169,23 +152,35 @@ int main(void)
   uint16_t g_cal;
   uint16_t b_cal;
   uint32_t total_cal;
-  HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
-  HAL_Delay(3000);
-  apds.calibrate_sensor(&g_cal, &b_cal, &total_cal);
   
   // Setup find color application
-  uint16_t color_find_timer_max = 10000;
-  uint16_t color_find_timer = 20;
-  bool color_found = true;
+  uint16_t color_request_timeout = 50;
+  uint16_t color_request_timer = color_request_timeout;
+  uint16_t color_search_timeout = 10000;
+  uint16_t color_search_timer = color_search_timeout;
+  uint16_t song_wait_timeout = 700;
+  uint16_t song_wait_timer = song_wait_timeout;
+  uint16_t request_wait_timeout = 250;
+  uint16_t request_wait_timer = request_wait_timeout;
+  color_t color;
+  uint32_t color_total;
+  RGB_VALS rgb_new;
   uint8_t color_to_find;
-  uint8_t color_to_find_msg;
-  uint8_t color_det_timer = 0;
+  uint8_t color_audio_message;
 
   // Wake switch
-  GPIO_PinState wake_sw_state;
-  uint8_t wake_det;
-  uint8_t inactivity_det = 0;
-  uint8_t activity_det;
+  GPIO_PinState wake_sw_state = GPIO_PIN_SET;
+  GPIO_PinState wake_sw_state_new;
+
+  // States
+  typedef enum pwr_states {ST_pwr_off, ST_pwr_sleep, ST_pwr_awake} pwr_states;
+  pwr_states pwr_state = ST_pwr_off;
+
+  uint8_t tog_sw_change; 
+  uint8_t bg_sw_change;
+  uint8_t push_sw_change;
+
+  turn_all_leds_off(ring, bg);
 
   /* USER CODE END 2 */
 
@@ -198,222 +193,168 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-    ///////////////////////////////////////////////////////////////////////////////////
-    // Check if audio is currently being played
-    // Check if inactivity detected
-    ///////////////////////////////////////////////////////////////////////////////////
-    HAL_UART_Receive_IT(&huart1, &uart_data, 1);
-    if (uart_ready == 1) {
-      if (uart_data < 2) {
-        audio_playing = uart_data;
-      } else {
-        inactivity_det = uart_data - 2;
-      }
-      uart_ready = 0;
+    // Check wake/sleep switch
+    wake_sw_state_new = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
+    if ((wake_sw_state_new == GPIO_PIN_SET) && (wake_sw_state == GPIO_PIN_RESET)) {
+      turn_all_leds_off(ring, bg);
+      pwr_state = ST_pwr_off;
     }
+    wake_sw_state = wake_sw_state_new;
 
-    ///////////////////////////////////////////////////////////////////////////////////
-    // Wake/Sleep Function
-    ///////////////////////////////////////////////////////////////////////////////////
-    wake_sw_state = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
-    if ((wake_sw_state == GPIO_PIN_SET) | inactivity_det) {
-      ring_set_all_pixels(ring, rgb_off);
-      HAL_GPIO_WritePin(LED_0_GPIO_Port, LED_0_Pin, GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_RESET);
-      bg.clear_display();
-      color_find_timer = 50;
-      HAL_Delay(100);
-    }
-    wake_det = 0;
-    while (wake_sw_state == GPIO_PIN_SET) {
-      // do nothing
-      wake_sw_state = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
-      wake_det = 1;
-    }
-    if (wake_det == 1) {
-      audio_playing = 1;  // engine start sound will play
-      HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
-      HAL_Delay(3000);
-      apds.calibrate_sensor(&g_cal, &b_cal, &total_cal);
-    }
-
-    activity_det = 0;
-    while (inactivity_det == 1) {
-      sw_states_new = read_sw_states();
-      for (uint8_t sw_i = 0; sw_i < 4; sw_i++) {
-        if (sw_states_new[sw_i] != sw_states_old[sw_i]) {
-          inactivity_det = 0;
-        }
-      }
-
-      bg_sw_new = read_bg_states();
-      for (uint8_t i = 0; i < 8; i++) {
-        if (bg_sw_new[i] != bg_sw_old[i]) {
-          inactivity_det = 0;
-        }
-      }
-
-      HAL_UART_Receive_IT(&huart1, &uart_data, 1);
-      if (uart_ready == 1) {
-        if (uart_data == 1) {
-          inactivity_det = 0;
-          audio_playing = 1;
-        }
-      }
-      activity_det = 1;
-    }
-
-    if (activity_det == 1) {
-      HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
-      HAL_Delay(3000);
-      apds.calibrate_sensor(&g_cal, &b_cal, &total_cal);
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////
-    // Toggle switches
-    ///////////////////////////////////////////////////////////////////////////////////
-    sw_states_new = read_sw_states();
-    HAL_GPIO_WritePin(LED_0_GPIO_Port, LED_0_Pin, sw_states_new[0]);
-    HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, sw_states_new[1]);
-    HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, sw_states_new[2]);
-    for (uint8_t sw_i = 0; sw_i < 4; sw_i++) {
-      if ((sw_states_new[sw_i] == GPIO_PIN_SET) && (sw_states_old[sw_i] == GPIO_PIN_RESET)) {
-        send_audio(sw_i);
-        if (sw_i == 3) {
-          ring_dir = !ring_dir;
+    switch(pwr_state) {
+      
+      case ST_pwr_off:
+        if (wake_sw_state == GPIO_PIN_RESET) {
+          read_tog_sw_states();
+          read_bg_sw_states();
+          read_push_sw_state();
+          bg.update(&bg_sw_states[0]);
+          color_state = ST_color_calibrate;
+          pwr_state = ST_pwr_awake;
         }
         break;
-      }
-    }
-    
-    for (uint8_t sw_i = 0; sw_i < 4; sw_i++) {
-      sw_states_old[sw_i] = sw_states_new[sw_i];
-    } 
 
-    ///////////////////////////////////////////////////////////////////////////////////
-    // Bar Graph
-    ///////////////////////////////////////////////////////////////////////////////////
-    bg_sw_new = read_bg_states();
-    for (uint8_t i = 0; i < 8; i++) {
-      if (bg_sw_new[i] != bg_sw_old[i]) {
-        HAL_Delay(100); // allow some debounce
-        break;
-      }
-    }
-    bg_sw_new = read_bg_states();
-    bg.update(&bg_sw_new[0]);
-    for (uint8_t i = 0; i < 8; i++) {
-      if (bg_sw_new[i] != bg_sw_old[i]) {
-        if (bg_sw_new[i] > bg_sw_old[i]) {
-          send_audio(AUDIO_TRIG_BG_UP);
+      case ST_pwr_sleep:
+        HAL_UART_Receive_IT(&huart1, &uart_data, 1);
+        tog_sw_change = check_tog_sw_states();
+        bg_sw_change = check_bg_sw_states();
+        push_sw_change = check_push_sw_state();
+        if (tog_sw_change || bg_sw_change || push_sw_change || uart_ready) {
+          uart_ready = 0;
+          uint8_t wakeup_message = 0;
+          HAL_UART_Transmit(&huart1, &wakeup_message, 1, HAL_MAX_DELAY);
+          pwr_state = ST_pwr_off;
         } else {
-          send_audio(AUDIO_TRIG_BG_DOWN);
+          HAL_Delay(100);
         }
-        bg_sw_old[i] = bg_sw_new[i];
-      } 
+        break;
+
+      case ST_pwr_awake:
+
+        ///////////////////////////////////////////////////////////////////////////////////
+        // Get new switch states
+        ///////////////////////////////////////////////////////////////////////////////////
+        update_tog_sw_states();
+        update_bg(bg);
+        update_push_sw_state(&ring_dir);
+
+        ///////////////////////////////////////////////////////////////////////////////////
+        // Color State Machine
+        ///////////////////////////////////////////////////////////////////////////////////
+        switch(color_state) {
+          
+          /////////////////////////// Calibrate sensor ////////////////////////////////////
+          case ST_color_calibrate:
+            HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, GPIO_PIN_SET);
+            HAL_Delay(3000);
+            apds.calibrate_sensor(&g_cal, &b_cal, &total_cal);
+            color_state = ST_color_request;
+            break;
+          
+          /////////////////////// Request a new color ////////////////////////////////////
+          case ST_color_request:
+            if (color_request_timer == 0) {
+              color_to_find = (HAL_RNG_GetRandomNumber(&hrng) % 7);
+              rgb_new = rgb_lut(color_to_find);
+              set_all_pixels(ring, rgb_new);
+              color_audio_message = color_to_find + 7;
+              send_audio(color_audio_message);
+              color_request_timer = color_request_timeout;
+              color_state = ST_color_wait_for_request;
+            } else {
+              color_request_timer--;
+            }
+            break;
+
+          //////////////////// Read color sensor and process /////////////////////////////
+          case ST_color_search:
+            
+            // Update ring
+            if (ring_dir == 0) {
+              ring.incrRing(rgb_new);
+            } else {
+              ring.decrRing(rgb_new);
+            }
+
+            // Repeat request after timeout
+            if (color_search_timer == 0) {
+              color_search_timer = color_search_timeout;
+              color_audio_message = color_to_find + 7;
+              send_audio(color_audio_message);
+            } else {
+              color_search_timer--;
+            }
+            
+            apds.getColorData(&r, &g, &b, &c);
+            color_total = r + g + b + c;
+            if (color_total > (total_cal + 5000)) {
+              g = g - g_cal; //Adjust for offset from blue PCB 
+              b = b - b_cal; //Adjust for offset from blue PCB
+              color = apds.colorSort(r, g, b, color_total, color_to_find);
+              if (color != UNKNOWN) {
+                if (color == color_to_find) {
+                  color_state = ST_color_response_success;
+                } else {
+                  color_state = ST_color_response_fail;
+                }
+              }
+            }
+            break;
+
+          ////////////////////////////// Color found! /////////////////////////////////
+          case ST_color_response_success:
+            color_audio_message = color_to_find + 14;
+            send_audio(color_audio_message);
+            set_all_pixels(ring, rgb_new);
+            color_state = ST_color_wait_for_song;
+            break;
+
+          ////////////////////////// Wrong color found! //////////////////////////////
+          case ST_color_response_fail:
+            color_audio_message = color + 21;
+            send_audio(color_audio_message);
+            rgb_new = rgb_lut(color);
+            set_all_pixels(ring, rgb_new);
+            color_state = ST_color_wait_for_song;
+            break;
+
+          ////////////////////////// Wait for request to play ////////////////////////////
+          case ST_color_wait_for_request:
+            if (request_wait_timer == 0) {
+              request_wait_timer = request_wait_timeout;
+              color_state = ST_color_search;
+            } else {
+              request_wait_timer--;
+            }
+            break;
+          
+          ////////////////////////// Wait for song to play ////////////////////////////
+          case ST_color_wait_for_song:
+            if (song_wait_timer == 0) {
+              song_wait_timer = song_wait_timeout;
+              set_all_pixels(ring, rgb_off);
+              color_state = ST_color_request;
+            } else {
+              song_wait_timer--;
+            }
+            break;
+          
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////
+        // Check if inactivity detected
+        ///////////////////////////////////////////////////////////////////////////////////
+        HAL_UART_Receive_IT(&huart1, &uart_data, 1);
+        if (uart_ready == 1) {
+          if (uart_data == 3) {
+            turn_all_leds_off(ring, bg);
+            pwr_state = ST_pwr_sleep;
+          }
+          uart_ready = 0;
+        }
     }
     
-    ///////////////////////////////////////////////////////////////////////////////////
-    // Pick color to find
-    ///////////////////////////////////////////////////////////////////////////////////
-    if (color_find_timer == 0) {
-      if (color_found) {
-        color_to_find = (HAL_RNG_GetRandomNumber(&hrng) % 7);
-        color_to_find_msg = color_to_find + 7;
-        if (color_to_find == RED) {
-          rgb_new = RED_RGB;
-        } else if (color_to_find == ORANGE) {
-          rgb_new = ORANGE_RGB;
-        } else if (color_to_find == BLUE) {
-          rgb_new = BLUE_RGB;
-        } else if (color_to_find == GREEN) {
-          rgb_new = GREEN_RGB;
-        } else if (color_to_find == PINK) {
-          rgb_new = PINK_RGB;
-        } else if (color_to_find == PURPLE) {
-          rgb_new = PURPLE_RGB;
-        } else if (color_to_find == YELLOW) {
-          rgb_new = YELLOW_RGB;
-        }
-        color_found = false;
-      }
-      send_audio(color_to_find_msg);
-      color_find_timer = color_find_timer_max;
-    } else {
-      color_find_timer--;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////
-    // Get color sense data and compare to color asked for
-    ///////////////////////////////////////////////////////////////////////////////////
-    apds.getColorData(&r, &g, &b, &c);
-    uint32_t color_total = r + g + b + c;
-    if (color_det_timer == 0) {
-      if (color_found == false) {
-        if (color_total > (total_cal + 5000)) {
-          g = g - g_cal; //Adjust for offset from blue PCB 
-          b = b - b_cal; //Adjust for offset from blue PCB
-          color_t color;
-          color = apds.colorSort(r, g, b, color_total, color_to_find);
-
-          if (color != UNKNOWN) {
-            if (color == color_to_find) {
-              uint8_t color_found_success_msg = color_to_find_msg + 7;
-              send_audio(color_found_success_msg);
-              ring.setBrightness(100);
-              ring_set_all_pixels(ring, rgb_new);
-              ring.show();
-              ring.setBrightness(200);
-              color_found = true;
-              color_find_timer = 50;
-              HAL_Delay(10000);
-            } else {
-              uint8_t color_found_fail_msg = color + 21;
-              send_audio(color_found_fail_msg);
-              //color_det_timer = 25;
-
-              // Temporary code to allow the wrong color to work (for Ethan)
-              ring.setBrightness(100);
-              if (color == RED) {
-                ring_set_all_pixels(ring, RED_RGB);
-              } else if (color == ORANGE) {
-                ring_set_all_pixels(ring, ORANGE_RGB);
-              } else if (color == BLUE) {
-                ring_set_all_pixels(ring, BLUE_RGB);
-              } else if (color == GREEN) {
-                ring_set_all_pixels(ring, GREEN_RGB);
-              } else if (color == PINK) {
-                ring_set_all_pixels(ring, PINK_RGB);
-              } else if (color == PURPLE) {
-                ring_set_all_pixels(ring, PURPLE_RGB);
-              } else if (color == YELLOW) {
-                ring_set_all_pixels(ring, YELLOW_RGB);
-              }
-              ring.show();
-              ring.setBrightness(200);
-              color_found = true;
-              color_find_timer = 50;
-              HAL_Delay(10000);
-              //////////////////////////////////////////////////////////////
-            }
-          }
-        }
-      }
-    } else {
-      color_det_timer--;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////
-    // LED ring update
-    ///////////////////////////////////////////////////////////////////////////////////
-    if (ring_dir == 0) {
-      ring.incrRing(rgb_new);
-    } else {
-      ring.decrRing(rgb_new);
-    }
-
+    // Slow down loop
     HAL_Delay(15);
     
   }
@@ -484,35 +425,6 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-GPIO_PinState * read_sw_states(void) {
-  static GPIO_PinState sw_states[4];
-  sw_states[0] = HAL_GPIO_ReadPin(SW_0_GPIO_Port, SW_0_Pin);
-  sw_states[1] = HAL_GPIO_ReadPin(SW_1_GPIO_Port, SW_1_Pin);
-  sw_states[2] = HAL_GPIO_ReadPin(SW_2_GPIO_Port, SW_2_Pin);
-  sw_states[3] = HAL_GPIO_ReadPin(SW_3_GPIO_Port, SW_3_Pin);
-  return sw_states;
-}
-
-uint8_t * read_bg_states(void) {
-  static uint8_t bg_sw_states[8];
-  bg_sw_states[0] = !HAL_GPIO_ReadPin(BG_SW_0_GPIO_Port, BG_SW_0_Pin);
-  bg_sw_states[1] = !HAL_GPIO_ReadPin(BG_SW_1_GPIO_Port, BG_SW_1_Pin);
-  bg_sw_states[2] = !HAL_GPIO_ReadPin(BG_SW_2_GPIO_Port, BG_SW_2_Pin);
-  bg_sw_states[3] = !HAL_GPIO_ReadPin(BG_SW_3_GPIO_Port, BG_SW_3_Pin);
-  bg_sw_states[4] = !HAL_GPIO_ReadPin(BG_SW_4_GPIO_Port, BG_SW_4_Pin);
-  bg_sw_states[5] = !HAL_GPIO_ReadPin(BG_SW_5_GPIO_Port, BG_SW_5_Pin);
-  bg_sw_states[6] = !HAL_GPIO_ReadPin(BG_SW_6_GPIO_Port, BG_SW_6_Pin);
-  bg_sw_states[7] = !HAL_GPIO_ReadPin(BG_SW_7_GPIO_Port, BG_SW_7_Pin);
-  return bg_sw_states;
-}
-
-void send_audio(uint8_t audio_trig_index) {
-  if (audio_playing == 0) {
-    HAL_UART_Transmit(&huart1, &audio_trig_index, 1, HAL_MAX_DELAY);
-    audio_playing = 1;
-  }
-}
-
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
   uart_ready = 1;
 }

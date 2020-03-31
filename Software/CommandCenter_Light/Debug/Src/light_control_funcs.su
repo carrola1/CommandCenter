@@ -1,0 +1,13 @@
+light_control_funcs.cpp:8:6:void read_tog_sw_states()	8	static
+light_control_funcs.cpp:14:9:uint8_t check_tog_sw_states()	16	static
+light_control_funcs.cpp:28:6:void update_tog_sw_states()	16	static
+light_control_funcs.cpp:47:6:void read_bg_sw_states()	16	static
+light_control_funcs.cpp:63:9:uint8_t check_bg_sw_states()	24	static
+light_control_funcs.cpp:86:6:void update_bg(BarGraph&)	40	static
+light_control_funcs.cpp:130:6:void read_push_sw_state()	8	static
+light_control_funcs.cpp:134:9:uint8_t check_push_sw_state()	24	static
+light_control_funcs.cpp:143:6:void update_push_sw_state(uint8_t*)	32	static
+light_control_funcs.cpp:156:10:RGB_VALS rgb_lut(uint8_t)	24	static
+light_control_funcs.cpp:176:6:void set_all_pixels(DotStar&, RGB_VALS)	16	static
+light_control_funcs.cpp:183:6:void turn_all_leds_off(DotStar&, BarGraph&)	24	static
+light_control_funcs.cpp:193:6:void send_audio(uint8_t)	16	static
