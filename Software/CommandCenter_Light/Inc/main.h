@@ -37,7 +37,8 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
+typedef enum color_states { ST_color_calibrate, ST_color_request, ST_color_search, ST_color_response_success, 
+                            ST_color_response_fail, ST_color_wait_for_request, ST_color_wait_for_song } color_states;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

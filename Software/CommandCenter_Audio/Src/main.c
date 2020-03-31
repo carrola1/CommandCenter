@@ -20,6 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "string.h"
 #include "stm32l0xx_hal.h"
 #include "dma.h"
 #include "diskio.h"
@@ -30,6 +31,7 @@
 #include "usart.h"
 #include "gpio.h"
 #include "wav_player.h"
+#include "motor.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -54,18 +56,17 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-#define INACTIVITY_CNT_MAX 50000
 uint8_t uart_data;
 uint8_t uart_ready = 0;
-uint8_t audio_playing = 0;
-uint16_t inactivity_cnt = INACTIVITY_CNT_MAX;
+uint16_t timer_1sec = 0;
+uint8_t timer_1sec_flag = 0;
 FATFS FatFs;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-void play_audio(char wav_file[32]);
+void wav_file_lut(uint8_t audio_code, char * wav_file);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -112,36 +113,63 @@ int main(void)
   HAL_GPIO_WritePin(PWR_ENB_GPIO_Port, PWR_ENB_Pin, GPIO_PIN_SET);
   
   // Mount SD Card
-  FRESULT fr;     /* FatFs return code */
   HAL_GPIO_WritePin(SD_CS_GPIO_Port, SD_CS_Pin, GPIO_PIN_SET);
-  fr = f_mount(&FatFs, "", 1);
+  f_mount(&FatFs, "", 1);
 
   // Audio
-  uint8_t audio_mismatch_cnt = 0;
-  uint8_t audio_mismatch_cnt_max = 100;
-  
+  uint8_t new_audio_flag = 0;
+  uint8_t audio_is_playing = 0;
+  uint8_t audio_code;
+
+  char audio_files[31][32];
+  strcpy(audio_files[0], "blip.wav");
+  strcpy(audio_files[1], "bloop.wav");
+  strcpy(audio_files[2], "blurp.wav");
+  strcpy(audio_files[3], "boing.wav");
+  strcpy(audio_files[4], "decrement.wav");
+  strcpy(audio_files[5], "increment.wav");
+  strcpy(audio_files[6], "start_engine.wav");
+  strcpy(audio_files[7], "find_red.wav");
+  strcpy(audio_files[8], "find_green.wav");
+  strcpy(audio_files[9], "find_blue.wav");
+  strcpy(audio_files[10], "find_yellow.wav");
+  strcpy(audio_files[11], "find_purple.wav");
+  strcpy(audio_files[12], "find_pink.wav");
+  strcpy(audio_files[13], "find_orange.wav");
+  strcpy(audio_files[14], "red.wav");
+  strcpy(audio_files[15], "green.wav");
+  strcpy(audio_files[16], "blue.wav");
+  strcpy(audio_files[17], "yellow.wav");
+  strcpy(audio_files[18], "purple.wav");
+  strcpy(audio_files[19], "pink.wav");
+  strcpy(audio_files[20], "orange.wav");
+  strcpy(audio_files[21], "red.wav");
+  strcpy(audio_files[22], "green.wav");
+  strcpy(audio_files[23], "blue.wav");
+  strcpy(audio_files[24], "yellow.wav");
+  strcpy(audio_files[25], "purple.wav");
+  strcpy(audio_files[26], "pink.wav");
+  strcpy(audio_files[27], "orange.wav");
+  strcpy(audio_files[28], "pete_the_cat.wav");
+  strcpy(audio_files[29], "snuggle_puppy.wav");
+  strcpy(audio_files[30], "elmo.wav");
+
   // Setup Motor PWM
-  uint8_t motor_state_0;
-  uint8_t motor_state_1;
-  uint8_t motor_state_2;
-  uint8_t motor_state_last;
-  motor_state_0 = HAL_GPIO_ReadPin(MOTOR_SW_0_GPIO_Port, MOTOR_SW_0_Pin);
-  motor_state_1 = HAL_GPIO_ReadPin(MOTOR_SW_1_GPIO_Port, MOTOR_SW_1_Pin);
-  motor_state_2 = HAL_GPIO_ReadPin(MOTOR_SW_2_GPIO_Port, MOTOR_SW_2_Pin);
-  if (motor_state_0 == 0) {
-    motor_state_last = 0;
-    HAL_LPTIM_PWM_Start(&hlptim1, 0x1388, 0x0258);
-  } else if (motor_state_1 == 0) {
-    motor_state_last = 1;
-    HAL_LPTIM_PWM_Start(&hlptim1, 0x1388, 0x0190);
-  } else {
-    motor_state_last = 2;
-    HAL_LPTIM_PWM_Start(&hlptim1, 0x1388, 0x00AF);
-  }
+  motor_state motor_position_new;
+  motor_state motor_position_last;
+  motor_position_last = get_motor_position();
+  set_motor_position(motor_position_last);
 
   // Wake switch
   GPIO_PinState wake_sw_state;
-  uint8_t wake_det;
+
+  // States
+  typedef enum states {ST_off, ST_sleep, ST_awake} states;
+  states state = ST_off;
+
+  // Inactivity detection
+  uint16_t inactivity_timeout = 600;
+  uint16_t inactivity_timer = inactivity_timeout;
 
   // Test LED
   HAL_GPIO_WritePin(TEST_LED_GPIO_Port, TEST_LED_Pin, GPIO_PIN_RESET);
@@ -153,146 +181,102 @@ int main(void)
   while (1)
   {
     
-    ///////////////////////////////////////////////////////////////////////////////////
-    // Wake/Sleep Function
-    ///////////////////////////////////////////////////////////////////////////////////
-    if (inactivity_cnt == 0) {
-      uint8_t inactivity_det_msg = 3;
-      HAL_UART_Transmit(&huart1, &inactivity_det_msg, 1, HAL_MAX_DELAY);
-      inactivity_cnt = INACTIVITY_CNT_MAX;
-    } else {
-      inactivity_cnt--;
-    }
-
-    wake_det = 0;
     wake_sw_state = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
-    while (wake_sw_state == GPIO_PIN_SET) {
-      // do nothing
-      HAL_Delay(100);
-      wake_sw_state = HAL_GPIO_ReadPin(WKUP_GPIO_Port, WKUP_Pin);
-      wake_det = 1;
-    }
-    if (wake_det == 1) {
-      play_audio("start_engine.wav");
-    }
-    
-    ///////////////////////////////////////////////////////////////////////////////////
-    // Motor control
-    ///////////////////////////////////////////////////////////////////////////////////
-    motor_state_0 = HAL_GPIO_ReadPin(MOTOR_SW_0_GPIO_Port, MOTOR_SW_0_Pin);
-    motor_state_1 = HAL_GPIO_ReadPin(MOTOR_SW_1_GPIO_Port, MOTOR_SW_1_Pin);
-    motor_state_2 = HAL_GPIO_ReadPin(MOTOR_SW_2_GPIO_Port, MOTOR_SW_2_Pin);
-    if ((motor_state_0 == 0) & (motor_state_last != 0)) {
-      __HAL_LPTIM_COMPARE_SET(&hlptim1, 0x0258);
-      HAL_Delay(100);
-      if (wake_det == 0) {
-        play_audio("pete_the_cat.wav");
-      }
-      motor_state_last = 0;
-    } else if ((motor_state_1 == 0) & (motor_state_last != 1)) {
-      __HAL_LPTIM_COMPARE_SET(&hlptim1, 0x0190);
-      HAL_Delay(100);
-      if (wake_det == 0) {
-        play_audio("snuggle_puppy.wav");
-      }
-      motor_state_last = 1;
-    } else if ((motor_state_2 == 0) & (motor_state_last != 2)) {
-      __HAL_LPTIM_COMPARE_SET(&hlptim1, 0x00AF);
-      HAL_Delay(100);
-      if (wake_det == 0) {
-        play_audio("elmo.wav");
-      }
-      motor_state_last = 2;
+    if (wake_sw_state == GPIO_PIN_SET) {
+      state = ST_off;
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////
-    // Play pending audio from light controller
-    ///////////////////////////////////////////////////////////////////////////////////
-    HAL_UART_Receive_IT(&huart1, &uart_data, 1);
-    if (uart_ready == 1) {
-      if (uart_data == AUDIO_TRIG_SW0) {
-        play_audio("blip.wav");
-      } else if (uart_data == AUDIO_TRIG_SW1) {
-        play_audio("bloop.wav");
-      } else if (uart_data == AUDIO_TRIG_SW2) {
-        play_audio("blurp.wav");
-      } else if (uart_data == AUDIO_TRIG_SW3){
-        play_audio("boing.wav");
-      } else if (uart_data == AUDIO_TRIG_BG_UP){
-        play_audio("decrement.wav");
-      } else if (uart_data == AUDIO_TRIG_BG_DOWN){
-        play_audio("increment.wav");
-      } else if (uart_data == AUDIO_TRIG_FIND_RED) {
-    	  play_audio("find_red.wav");
-      } else if (uart_data == AUDIO_TRIG_FIND_GREEN) {
-      	play_audio("find_green.wav");
-      } else if (uart_data == AUDIO_TRIG_FIND_BLUE) {
-      	play_audio("find_blue.wav");
-      } else if (uart_data == AUDIO_TRIG_FIND_YELLOW) {
-      	play_audio("find_yellow.wav");
-      } else if (uart_data == AUDIO_TRIG_FIND_PURPLE) {
-      	play_audio("find_purple.wav");
-      } else if (uart_data == AUDIO_TRIG_FIND_PINK) {
-      	play_audio("find_pink.wav");
-      } else if (uart_data == AUDIO_TRIG_FIND_ORANGE) {
-      	play_audio("find_orange.wav");
-      } else if (uart_data == AUDIO_TRIG_FOUND_RED) {
-        play_audio("awesome.wav");
-        HAL_Delay(100);
-		    play_audio("red.wav");
-      } else if (uart_data == AUDIO_TRIG_FOUND_GREEN) {
-        play_audio("awesome.wav");
-        HAL_Delay(100);
-        play_audio("green.wav");
-      } else if (uart_data == AUDIO_TRIG_FOUND_BLUE) {
-        play_audio("awesome.wav");
-        HAL_Delay(100);
-        play_audio("blue.wav");
-      } else if (uart_data == AUDIO_TRIG_FOUND_YELLOW) {
-        play_audio("you_did_it.wav");
-        HAL_Delay(100);
-        play_audio("yellow.wav");
-      } else if (uart_data == AUDIO_TRIG_FOUND_PURPLE) {
-        play_audio("good_job.wav");
-        HAL_Delay(100);
-        play_audio("purple.wav");
-      } else if (uart_data == AUDIO_TRIG_FOUND_PINK) {
-        play_audio("good_job.wav");
-        HAL_Delay(100);
-        play_audio("pink.wav");
-      } else if (uart_data == AUDIO_TRIG_FOUND_ORANGE) {
-        play_audio("you_did_it.wav");
-        HAL_Delay(100);
-        play_audio("orange.wav");
-      } else if (uart_data == AUDIO_TRIG_MISS_RED) {
-		    play_audio("red.wav");
-      } else if (uart_data == AUDIO_TRIG_MISS_GREEN) {
-        play_audio("green.wav");
-      } else if (uart_data == AUDIO_TRIG_MISS_BLUE) {
-        play_audio("blue.wav");
-      } else if (uart_data == AUDIO_TRIG_MISS_YELLOW) {
-        play_audio("yellow.wav");
-      } else if (uart_data == AUDIO_TRIG_MISS_PURPLE) {
-        play_audio("purple.wav");
-      } else if (uart_data == AUDIO_TRIG_MISS_PINK) {
-        play_audio("pink.wav");
-      } else if (uart_data == AUDIO_TRIG_MISS_ORANGE) {
-        play_audio("orange.wav");
-      } else {
-    	  play_audio("try_again.wav");
-      }
-    }
+    switch(state) {
+      
+      ///////////////////////////////////////////////////////////////////////////////////
+      // Off State
+      // Key is turned to the off position
+      ///////////////////////////////////////////////////////////////////////////////////
+      case ST_off:
+        if (wake_sw_state == GPIO_PIN_RESET) {
+          new_audio_flag = 1;
+          audio_code = AUDIO_TRIG_START;
+          state = ST_awake;
+        }
+        HAL_Delay(200);
+        break;
 
-    // Make sure audio doesn't get stuck
-    if (audio_mismatch_cnt == audio_mismatch_cnt_max) {
-      HAL_UART_Transmit(&huart1, &audio_playing, 1, HAL_MAX_DELAY);
-      audio_mismatch_cnt = 0;
-    } else {
-      audio_mismatch_cnt++;
-    }
+      ///////////////////////////////////////////////////////////////////////////////////
+      // Sleep State
+      // Go here after period of inactivity
+      // Look for motor switch change or message from Light controller to wake up
+      ///////////////////////////////////////////////////////////////////////////////////
+      case ST_sleep:
+        HAL_UART_Receive_IT(&huart1, &uart_data, 1);
+        motor_position_new = get_motor_position();
+        if ((motor_position_new != motor_position_last) || (uart_ready)) {
+          state = ST_awake;
+          uart_ready = 0;
+          inactivity_timer = inactivity_timeout;
+          uint8_t inactivity_det_msg = 2;
+          HAL_UART_Transmit(&huart1, &inactivity_det_msg, 1, HAL_MAX_DELAY);
+        }
+        break;
+      
+      ///////////////////////////////////////////////////////////////////////////////////
+      // Wake State
+      ///////////////////////////////////////////////////////////////////////////////////
+      case ST_awake:
 
-    // Slow loop down
-    HAL_Delay(10);
+        // Motor control
+        motor_position_new = update_motor(motor_position_last);
+        if (motor_position_new != motor_position_last) {
+          audio_code = 28 + motor_position_new;
+          new_audio_flag = 1;
+          motor_position_last = motor_position_new;
+        }
+
+        // Check for pending audio from light controller
+        HAL_UART_Receive_IT(&huart1, &uart_data, 1);
+        if (uart_ready == 1) {
+          audio_code = uart_data;
+          new_audio_flag = 1;
+          uart_ready = 0;
+        }
+
+        // If new audio comes in while something is already playing
+        //  need to close the file and open the a new one.
+        if (new_audio_flag == 1) {
+          if (audio_is_playing) {
+            close_wav();
+          }
+          open_wav(audio_files[audio_code]);
+        }
+
+        // Play a chunk of audio
+        if ((new_audio_flag) || (audio_is_playing)) {
+          audio_is_playing = 1;
+          new_audio_flag = 0;
+          uint8_t file_complete = play_chunk();
+          inactivity_timer = inactivity_timeout;
+          if (file_complete == 1) {
+            close_wav();
+            audio_is_playing = 0;
+          }
+        }
+
+        // Detect inactivity / wake
+        if (timer_1sec_flag) {
+          if (inactivity_timer == 0) {
+            uint8_t inactivity_det_msg = 3;
+            HAL_UART_Transmit(&huart1, &inactivity_det_msg, 1, HAL_MAX_DELAY);
+            state = ST_sleep;
+          } else {
+            inactivity_timer--;
+          }
+          timer_1sec_flag = 0;
+        }
+        break;
+
+      default:
+        state = ST_awake;
+
+    }
 
     /* USER CODE END WHILE */
 
@@ -365,20 +349,14 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void play_audio(char wav_file[32]) {
-  audio_playing = 1;
-  HAL_UART_Transmit(&huart1, &audio_playing, 1, HAL_MAX_DELAY);
-  play_wav(wav_file);
-  audio_playing = 0;
-  HAL_UART_Transmit(&huart1, &audio_playing, 1, HAL_MAX_DELAY);
-  HAL_Delay(10);
-  HAL_UART_Receive_IT(&huart1, &uart_data, 1);	// clear pending interrupt
-  uart_ready = 0;
-  if (inactivity_cnt == 0) {
-    uint8_t inactivity_det_msg = 2;
-    HAL_UART_Transmit(&huart1, &inactivity_det_msg, 1, HAL_MAX_DELAY);
+void HAL_SYSTICK_Callback(void) {
+  if (timer_1sec == 1000) {
+    timer_1sec = 0;
+    timer_1sec_flag = 1;
+  } else {
+    timer_1sec++;
   }
-  inactivity_cnt = INACTIVITY_CNT_MAX;
+  return;
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {

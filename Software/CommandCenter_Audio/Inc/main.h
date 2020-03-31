@@ -111,7 +111,9 @@ void Error_Handler(void);
 #define AUDIO_TRIG_MISS_PURPLE  25
 #define AUDIO_TRIG_MISS_PINK    26
 #define AUDIO_TRIG_MISS_ORANGE  27
-
+#define AUDIO_TRIG_PETE         28
+#define AUDIO_TRIG_SNUGGLE_PUP  29
+#define AUDIO_TRIG_ELMO         30
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

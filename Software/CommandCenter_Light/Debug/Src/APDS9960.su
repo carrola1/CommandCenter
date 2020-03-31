@@ -52,4 +52,4 @@ APDS9960.cpp:597:10:uint16_t APDS9960::read16R(uint8_t)	32	static
 APDS9960.cpp:615:6:void APDS9960::read(uint8_t, uint8_t*, uint8_t)	48	static
 APDS9960.cpp:634:6:void APDS9960::write(uint8_t, uint8_t, uint8_t)	40	static
 APDS9960.cpp:639:9:color_t APDS9960::colorSort(uint16_t, uint16_t, uint16_t, uint32_t, uint8_t)	64	static
-APDS9960.cpp:708:6:void APDS9960::calibrate_sensor(uint16_t*, uint16_t*, uint32_t*)	88	static
+APDS9960.cpp:709:6:void APDS9960::calibrate_sensor(uint16_t*, uint16_t*, uint32_t*)	88	static

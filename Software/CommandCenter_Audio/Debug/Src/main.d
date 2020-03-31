@@ -33,7 +33,8 @@ Src/main.o: ../Src/main.c ../Inc/main.h \
  ../Middlewares/Third_Party/FatFs/src/ff.h \
  ../Middlewares/Third_Party/FatFs/src/ffconf.h ../Inc/lptim.h \
  ../Inc/i2s.h ../Inc/spi.h ../Inc/usart.h ../Inc/gpio.h \
- ../Inc/wav_player.h ../Inc/i2s.h
+ ../Inc/wav_player.h ../Inc/i2s.h ../Inc/motor.h ../Inc/lptim.h \
+ ../Inc/gpio.h
 
 ../Inc/main.h:
 
@@ -120,3 +121,9 @@ Src/main.o: ../Src/main.c ../Inc/main.h \
 ../Inc/wav_player.h:
 
 ../Inc/i2s.h:
+
+../Inc/motor.h:
+
+../Inc/lptim.h:
+
+../Inc/gpio.h:

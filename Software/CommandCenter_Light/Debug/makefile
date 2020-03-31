@@ -47,13 +47,16 @@ default.size.stdout \
 OBJDUMP_LIST += \
 CommandCenter_Light.list \
 
+OBJCOPY_BIN += \
+CommandCenter_Light.bin \
+
 
 # All Target
 all: CommandCenter_Light.elf secondary-outputs
 
 # Tool invocations
-CommandCenter_Light.elf: $(OBJS) $(USER_OBJS) /home/andrew/Documents/GitHub/CommandCenter/Software/CommandCenter_Light/STM32L052C8TX_FLASH.ld
-	arm-none-eabi-g++ -o "CommandCenter_Light.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"/home/andrew/Documents/GitHub/CommandCenter/Software/CommandCenter_Light/STM32L052C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="CommandCenter_Light.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+CommandCenter_Light.elf: $(OBJS) $(USER_OBJS) C:\GitHub\CommandCenter\Software\CommandCenter_Light\STM32L052C8TX_FLASH.ld
+	arm-none-eabi-g++ -o "CommandCenter_Light.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"C:\GitHub\CommandCenter\Software\CommandCenter_Light\STM32L052C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="CommandCenter_Light.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -67,12 +70,17 @@ CommandCenter_Light.list: $(EXECUTABLES)
 	@echo 'Finished building: $@'
 	@echo ' '
 
+CommandCenter_Light.bin: $(EXECUTABLES)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "CommandCenter_Light.bin"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
 	-$(RM) *
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_BIN)
 
 .PHONY: all clean dependents
 .SECONDARY:

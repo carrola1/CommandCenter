@@ -33,13 +33,16 @@ default.size.stdout \
 OBJDUMP_LIST += \
 CommandCenter_Audio.list \
 
+OBJCOPY_BIN += \
+CommandCenter_Audio.bin \
+
 
 # All Target
 all: CommandCenter_Audio.elf secondary-outputs
 
 # Tool invocations
-CommandCenter_Audio.elf: $(OBJS) $(USER_OBJS) /home/andrew/Documents/GitHub/CommandCenter/Software/CommandCenter_Audio/STM32L052C8TX_FLASH.ld
-	arm-none-eabi-gcc -o "CommandCenter_Audio.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"/home/andrew/Documents/GitHub/CommandCenter/Software/CommandCenter_Audio/STM32L052C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="CommandCenter_Audio.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+CommandCenter_Audio.elf: $(OBJS) $(USER_OBJS) C:\GitHub\CommandCenter\Software\CommandCenter_Audio\STM32L052C8TX_FLASH.ld
+	arm-none-eabi-gcc -o "CommandCenter_Audio.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"C:\GitHub\CommandCenter\Software\CommandCenter_Audio\STM32L052C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="CommandCenter_Audio.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -53,12 +56,17 @@ CommandCenter_Audio.list: $(EXECUTABLES)
 	@echo 'Finished building: $@'
 	@echo ' '
 
+CommandCenter_Audio.bin: $(EXECUTABLES)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "CommandCenter_Audio.bin"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
 	-$(RM) *
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_BIN)
 
 .PHONY: all clean dependents
 .SECONDARY:
