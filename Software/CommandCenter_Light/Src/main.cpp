@@ -156,9 +156,9 @@ int main(void)
   // Setup find color application
   uint16_t color_request_timeout = 50;
   uint16_t color_request_timer = color_request_timeout;
-  uint16_t color_search_timeout = 10000;
+  uint16_t color_search_timeout = 20000;
   uint16_t color_search_timer = color_search_timeout;
-  uint16_t song_wait_timeout = 700;
+  uint16_t song_wait_timeout = 1000;
   uint16_t song_wait_timer = song_wait_timeout;
   uint16_t request_wait_timeout = 250;
   uint16_t request_wait_timer = request_wait_timeout;
@@ -330,9 +330,11 @@ int main(void)
           
           ////////////////////////// Wait for song to play ////////////////////////////
           case ST_color_wait_for_song:
-            if (song_wait_timer == 0) {
+            HAL_UART_Receive_IT(&huart1, &uart_data, 1);
+            if ((song_wait_timer == 0) || (uart_ready == 1)) {
               song_wait_timer = song_wait_timeout;
               set_all_pixels(ring, rgb_off);
+              uart_ready = 0;
               color_state = ST_color_request;
             } else {
               song_wait_timer--;

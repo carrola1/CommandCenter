@@ -235,6 +235,16 @@ int main(void)
         HAL_UART_Receive_IT(&huart1, &uart_data, 1);
         if (uart_ready == 1) {
           audio_code = uart_data;
+          if ((audio_code >= 14) && (audio_code <= 15)) {
+            play_wav("awesome.wav");
+            HAL_Delay(200);
+          } else if ((audio_code >= 16) && (audio_code <= 18)) {
+            play_wav("good_job.wav");
+            HAL_Delay(200);
+          } else if ((audio_code >= 19) && (audio_code <= 20)) {
+            play_wav("you_did_it.wav");
+            HAL_Delay(200);
+          }
           new_audio_flag = 1;
           uart_ready = 0;
         }
@@ -257,6 +267,7 @@ int main(void)
           if (file_complete == 1) {
             close_wav();
             audio_is_playing = 0;
+            HAL_UART_Transmit(&huart1, &audio_is_playing, 1, HAL_MAX_DELAY);
           }
         }
 

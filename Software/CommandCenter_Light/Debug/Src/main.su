@@ -1,6 +1,6 @@
 APDS9960.h:190:3:APDS9960::APDS9960()	16	static
 main.cpp:99:5:int main()	216	static
-main.cpp:369:6:void SystemClock_Config()	120	static
-main.cpp:428:6:void HAL_UART_RxCpltCallback(UART_HandleTypeDef*)	16	static
-main.cpp:432:6:void Error_Handler()	8	static
-main.cpp:441:6:void _Error_Handler(char*, int)	16	static
+main.cpp:371:6:void SystemClock_Config()	120	static
+main.cpp:430:6:void HAL_UART_RxCpltCallback(UART_HandleTypeDef*)	16	static
+main.cpp:434:6:void Error_Handler()	8	static
+main.cpp:443:6:void _Error_Handler(char*, int)	16	static
